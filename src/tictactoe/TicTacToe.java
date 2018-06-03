@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * TODOs :
- * 1 > User defined array (done)(testing)
+ * 1 > Pre-defined array (done)(testing)
  * 2 > dynamic order of array
  * 3 > Validations
  * 3 > GUI
@@ -17,12 +17,6 @@ public class TicTacToe {
     // Parameterss
     private int ticLength;
     private int[][] ticArray;
-    // ticArray predefined
-    //private int[][] ticArray = { {1,2,3,1,1},
-    //                             {4,5,6,1,1},
-    //                            {7,8,9,1,1},
-    //                             {7,8,9,1,1},
-    //                             {7,8,9,1,1}};
     private int u1 = 1;
     private int u2 = 2;
 
@@ -35,8 +29,20 @@ public class TicTacToe {
     // Init game parameters
     public void init() {
         System.out.print("Enter Length/Order: ");
+        
         this.ticLength = scan.nextInt();
+        // ticLength predefined
+        // this.ticLength = 6;
+        
         ticArray = new int[ticLength][ticLength];
+        // ticArray predefined
+        // ticArray = { {1,2,3,1,1},
+        //              {4,5,6,1,1},
+        //              {7,8,9,1,1},
+        //              {7,8,9,1,1},
+        //              {7,8,9,1,1}};
+        
+        
     }
     
     // Render TicTacToe Structure
