@@ -1,11 +1,12 @@
 package tictactoe;
 
 import java.util.Scanner;
+import static tictactoe.Colors.*;
 
 /**
  * TODOs :
- * 1 > Pre-defined array (done)(testing)
- * 2 > dynamic order of array
+ * 1 > Pre-defined array (done) (emplemented)
+ * 2 > dynamic size of tictactoe array (done) (testing)
  * 3 > Validations
  * 3 > GUI
  * 4 > Web interface
@@ -36,7 +37,7 @@ public class TicTacToe {
     
     // Init game parameters
     public void init() {
-        System.out.print("Enter Length/Order: ");
+        System.out.print(MSS_GREEN + "Enter Length/Order: " + MSS_RESET);
         
         this.ticLength = scan.nextInt();
         // ticLength predefined
@@ -48,18 +49,18 @@ public class TicTacToe {
     
     // Render TicTacToe Structure
     public void renderStructure() {
-        System.out.print( new String(new char[this.ticLength]).replace("\0", "+---"));
+        System.out.print( new String(new char[this.ticLength]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
         System.out.println("+");
         
         for(int i = 0; i < this.ticLength; i++) {
             for(int j = 0; j < this.ticLength; j++) {
-                System.out.print("| " + ticArray[i][j] + " ");
+                System.out.print(MSS_GREEN_BG + MSS_BLACK  + "| " + ticArray[i][j] + " ");
             }
             System.out.println("|");
         }
         
-        System.out.print( new String(new char[this.ticLength]).replace("\0", "+---"));
-        System.out.println("+");
+        System.out.print( new String(new char[this.ticLength]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
+        System.out.println("+" + MSS_RESET);
         
     }
     
@@ -78,7 +79,7 @@ public class TicTacToe {
     
     // Ask user's input
     public void userInput() {
-        System.out.printf("User %s, make your move: ",turn);
+        System.out.printf("%sUser %s, make your move: ", MSS_GREEN, turn);
     }
     
     // Implement User's turn in TicTacToe
@@ -178,8 +179,8 @@ public class TicTacToe {
     
     // Results
     public void result() {
-        System.out.printf("user %s won the game.\n", turn);
-        System.out.println("Thanks For Playing.");
+        System.out.printf("%s%sUser %s won the game.\n", MSS_RED_BG, MSS_WHITE, turn);
+        System.out.println(MSS_RED_BG + MSS_WHITE + "Thanks For Playing.");
         renderStructure();
     }
     
