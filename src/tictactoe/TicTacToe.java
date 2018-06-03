@@ -29,6 +29,7 @@ public class TicTacToe {
 
     private int turn = u1;
     private boolean newLevel = true;
+    private int pattern = 3;
     
     // Scanner
     Scanner scan = new Scanner(System.in);
@@ -92,16 +93,18 @@ public class TicTacToe {
     
     // Game Logic 
     public void logic(int i1, int i2) {        
-        // my bad :\
+        // my bad :/
         int result1 = 0;
         int result2 = 0;
         int result3 = 0;
         int result4 = 0;
+        int result5 = 0;
+        int result6 = 0;
         
         for(int i = 0; i < this.ticLength; i++) {
             if(ticArray[i][i2] == turn) {
                 result1++;
-                    if(result1 == this.ticLength) {
+                    if(result1 == this.pattern) {
                     this.newLevel = false;
                     result();
                     break; }
@@ -111,7 +114,7 @@ public class TicTacToe {
             
             if(ticArray[i1][i] == turn) {
                 result2++;
-                    if(result2 == this.ticLength) {
+                    if(result2 == this.pattern) {
                     this.newLevel = false;
                     result();
                     break; }
@@ -121,7 +124,7 @@ public class TicTacToe {
             
             if(ticArray[i][i] == turn) {
                 result3++;
-                if(result3 == this.ticLength) {
+                if(result3 == this.pattern) {
                     this.newLevel = false;
                     result();
                     break; }
@@ -133,7 +136,7 @@ public class TicTacToe {
                 if(i+j == this.ticLength-1) {
                     if(ticArray[i][j] == turn) {
                         result4++;
-                        if(result4 == this.ticLength) {
+                        if(result4 == this.pattern) {
                             this.newLevel = false;
                             result();
                             break; }
@@ -146,13 +149,13 @@ public class TicTacToe {
             for(int j = 0; j < this.ticLength; j++) {
                 if(i+j == i1+i2) {
                     if(ticArray[i][j] == turn) {
-                        result4++;
-                        if(result4 == this.ticLength) {
+                        result5++;
+                        if(result5 == this.pattern) {
                             this.newLevel = false;
                             result();
                             break; }
                     } else {
-                        result4 = 0;
+                        result5 = 0;
                     }
                 }
             }
@@ -160,13 +163,13 @@ public class TicTacToe {
             for(int j = 0; j < this.ticLength; j++) {
                 if(i+j == Math.abs(i1-i2)) {
                     if(ticArray[i][j] == turn) {
-                        result4++;
-                        if(result4 == this.ticLength) {
+                        result6++;
+                        if(result6 == this.pattern) {
                             this.newLevel = false;
                             result();
                             break; }
                     } else {
-                        result4 = 0;
+                        result6 = 0;
                     }
                 }
             }
