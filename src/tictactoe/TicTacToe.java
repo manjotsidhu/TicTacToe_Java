@@ -16,6 +16,13 @@ import java.util.Scanner;
 public class TicTacToe {
     // Parameterss
     private int ticLength;
+    // ticArray predefined
+    /* private int[][] ticArray = {{1,2,1,1,1,2},
+                                {7,1,9,1,1,2},
+                                {1,8,9,1,1,2},
+                                {7,8,9,1,1,2},
+                                {7,8,9,1,1,2},
+                                {7,8,9,1,1,2}}; */
     private int[][] ticArray;
     private int u1 = 1;
     private int u2 = 2;
@@ -32,16 +39,9 @@ public class TicTacToe {
         
         this.ticLength = scan.nextInt();
         // ticLength predefined
-        // this.ticLength = 6;
+        //this.ticLength = 6;
         
         ticArray = new int[ticLength][ticLength];
-        // ticArray predefined
-        // ticArray = { {1,2,3,1,1},
-        //              {4,5,6,1,1},
-        //              {7,8,9,1,1},
-        //              {7,8,9,1,1},
-        //              {7,8,9,1,1}};
-        
         
     }
     
@@ -131,6 +131,34 @@ public class TicTacToe {
             
             for(int j = 0; j < this.ticLength; j++) {
                 if(i+j == this.ticLength-1) {
+                    if(ticArray[i][j] == turn) {
+                        result4++;
+                        if(result4 == this.ticLength) {
+                            this.newLevel = false;
+                            result();
+                            break; }
+                    } else {
+                        result4 = 0;
+                    }
+                }
+            }
+            
+            for(int j = 0; j < this.ticLength; j++) {
+                if(i+j == i1+i2) {
+                    if(ticArray[i][j] == turn) {
+                        result4++;
+                        if(result4 == this.ticLength) {
+                            this.newLevel = false;
+                            result();
+                            break; }
+                    } else {
+                        result4 = 0;
+                    }
+                }
+            }
+            
+            for(int j = 0; j < this.ticLength; j++) {
+                if(i+j == Math.abs(i1-i2)) {
                     if(ticArray[i][j] == turn) {
                         result4++;
                         if(result4 == this.ticLength) {
