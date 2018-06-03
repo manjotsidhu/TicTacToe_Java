@@ -1,6 +1,6 @@
 /*
  * ANSI Escape Color Codes
- * (Doesn't works on windows cmd
+ * (Doesn't works on windows cmd)
  */
 package tictactoe;
 
@@ -8,6 +8,7 @@ package tictactoe;
  * @author ManjotSidhu
  */
 public class Colors {
+
     // for Text Codes
     public static final String MSS_RESET = "\u001B[0m";
     public static final String MSS_BLACK = "\u001B[30m";
