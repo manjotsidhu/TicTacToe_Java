@@ -6,11 +6,9 @@ import static tictactoe.Colors.*;
 /**
  * TODOs : 
  * 2 > dynamic size of tictactoe array (done) (testing)
- * 3 > Validations (done) (testing)
- * 4 > change ticArray to char data type
- * 5 > User defined character
- * 6 > GUI 
- * 7 > Web interface
+ * 3 > Validations 
+ * 4 > GUI 
+ * 5 > Web interface
  *
  * @author ManjotSidhu
  */
@@ -33,7 +31,6 @@ public class TicTacToe {
     private int turn = u1;
     private boolean newLevel = true;
     private int pattern = 3;
-    private boolean continueGame = true;
 
     // Scanner
     Scanner scan = new Scanner(System.in);
@@ -68,7 +65,7 @@ public class TicTacToe {
     }
 
     // if Array isEmpty
-    /* public boolean isEmpty() {
+    public boolean isEmpty() {
         int empty = 0;
         for (int i = 0; i < this.ticLength; i++) {
             for (int j = 0; j < this.ticLength; j++) {
@@ -78,21 +75,16 @@ public class TicTacToe {
             }
         }
         return empty == 0;
-    } */
+    }
 
     // Ask user's input
     public void userInput() {
-        System.out.printf("%sUser %s, make your move: %s", MSS_GREEN, turn, MSS_RESET);
+        System.out.printf("%sUser %s, make your move: ", MSS_GREEN, turn);
     }
 
     // Implement User's turn in TicTacToe
     public void setValue(int i, int j) {
-        try {
-            ticArray[i][j] = turn;
-        } catch(ArrayIndexOutOfBoundsException E) {
-            System.out.println(MSS_RED + "Please input valid index number" + MSS_RESET);
-            continueGame = false;
-        }
+        ticArray[i][j] = turn;
     }
 
     // Set next user's turn accordingly
@@ -205,9 +197,6 @@ public class TicTacToe {
             int input1 = scan.nextInt();
             int input2 = scan.nextInt();
             setValue(input1, input2);
-            if(!this.continueGame) {
-                continue;
-            }
             logic(input1, input2);
             nextTurn();
         }
