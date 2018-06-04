@@ -5,9 +5,10 @@ import static tictactoe.Colors.*;
 
 /**
  * TODOs : 
- * 2 > dynamic size of tictactoe array (done) (implemented)
- * 3 > Validations (done) (testing)
- * 4 > GUI 
+ * 1 > ticArray to char or to generics
+ * 2 > user defined characters and colors
+ * 3 > more in-game color formattings
+ * 3 > GUI 
  * 5 > Web interface
  *
  * @author ManjotSidhu
@@ -23,12 +24,12 @@ public class TicTacToe {
                                 {7,8,9,1,1,2},
                                 {7,8,9,1,1,2},
                                 {7,8,9,1,1,2}}; */
-    private int[][] ticArray;
+    private char[][] ticArray;
     
-    private int u1 = 1;
-    private int u2 = 2;
+    private char u1 = 'X';
+    private char u2 = 'O';
 
-    private int turn = u1;
+    private char turn = u1;
     private boolean newLevel = true;
     private int pattern = 3;
     private boolean restart = true;
@@ -44,7 +45,7 @@ public class TicTacToe {
         // ticLength predefined
         //this.ticLength = 6;
 
-        ticArray = new int[ticLength][ticLength];
+        ticArray = new char[ticLength][ticLength];
 
     }
     
@@ -95,6 +96,10 @@ public class TicTacToe {
         } else if(i == 0 && j == 0) {
             System.out.println(MSS_RED + "Invalid index, indexes starts from 1(inclusive)" + MSS_RESET);
             restart = false;
+        } else if(ticArray[i][j] != 0) {
+            System.out.println(MSS_RED + i + " " + j + " index already has " + ticArray[i][j] + " value." + MSS_RESET);
+        } else {
+            restart = true;
         }
     }
 
@@ -210,7 +215,7 @@ public class TicTacToe {
     // Start main game
     public void start() {
         // Game starts with user 1
-        turn = 1;
+        turn = 'X';
         init();
         validateStructure();
         while (this.newLevel) {
