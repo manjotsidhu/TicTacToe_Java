@@ -5,11 +5,9 @@ import static tictactoe.Colors.*;
 
 /**
  * TODOs : 
- * 1 > ticArray to char or to generics (done)
- * 2 > user defined characters and colors (done)
- * 3 > better in-game color formattings
- * 3 > GUI 
- * 5 > Web interface
+ * 1 > Extend game to be played for more than 2 players
+ * 2 > Undo/Redo
+ * 3 > Import and export gameplay (Probably as JSON)
  *
  * @author ManjotSidhu
  */
