@@ -29,7 +29,7 @@ public class TicTacToe {
     private char u1;
     private char u2;
 
-    private char turn = u1;
+    private char turn;
     private boolean newLevel = true;
     private int pattern = 3;
     private boolean restart = true;
@@ -57,6 +57,9 @@ public class TicTacToe {
         // u1 and u2 predefined
         // this.u1 = 'X';
         // this.u2 = 'O';
+        
+        // Game starts with user 1
+        this.turn = u1;
     }
     
     // Validate array size/order values
@@ -106,30 +109,31 @@ public class TicTacToe {
     public void validateInput(int i, int j) {
         if(i > ticSize-1 || j > ticSize-1) {
             System.out.println(MSS_RED + "Please input valid index number" + MSS_RESET);
-            restart = false;
+            this.restart = false;
         } else if(i == 0 && j == 0) {
             System.out.println(MSS_RED + "Invalid index, indexes starts from 1(inclusive)" + MSS_RESET);
-            restart = false;
+            this.restart = false;
         } else if(ticArray[i][j] != 0) {
             System.out.println(MSS_RED + i + " " + j + " index already has " + ticArray[i][j] + " value." + MSS_RESET);
+            this.restart = false;
         } else {
-            restart = true;
+            this.restart = true;
         }
     }
 
     // Ask user's input
     public void userInput() {
-        System.out.printf("%sUser %s, make your move: %s", MSS_GREEN, turn, MSS_RESET);
+        System.out.printf("%sUser %s, make your move: %s", MSS_GREEN, this.turn, MSS_RESET);
     }
 
     // Implement User's turn in TicTacToe
     public void setValue(int i, int j) {
-        ticArray[i][j] = turn;
+        ticArray[i][j] = this.turn;
     }
 
     // Set next user's turn accordingly
     public void nextTurn() {
-        turn = (turn == u1) ? u2 : u1;
+        this.turn = (this.turn == this.u1) ? this.u2 : this.u1;
     }
 
     // Game Logic 
@@ -139,7 +143,7 @@ public class TicTacToe {
             result6 = 0;
 
         for (int i = 0; i < this.ticSize; i++) {
-            if (ticArray[i][i2] == turn) {
+            if (ticArray[i][i2] == this.turn) {
                 result1++;
                 if (result1 == this.pattern) {
                     this.newLevel = false;
@@ -150,7 +154,7 @@ public class TicTacToe {
                 result1 = 0;
             }
 
-            if (ticArray[i1][i] == turn) {
+            if (ticArray[i1][i] == this.turn) {
                 result2++;
                 if (result2 == this.pattern) {
                     this.newLevel = false;
@@ -161,7 +165,7 @@ public class TicTacToe {
                 result2 = 0;
             }
 
-            if (ticArray[i][i] == turn) {
+            if (ticArray[i][i] == this.turn) {
                 result3++;
                 if (result3 == this.pattern) {
                     this.newLevel = false;
@@ -174,7 +178,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == this.ticSize - 1) {
-                    if (ticArray[i][j] == turn) {
+                    if (ticArray[i][j] == this.turn) {
                         result4++;
                         if (result4 == this.pattern) {
                             this.newLevel = false;
@@ -189,7 +193,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == i1 + i2) {
-                    if (ticArray[i][j] == turn) {
+                    if (ticArray[i][j] == this.turn) {
                         result5++;
                         if (result5 == this.pattern) {
                             this.newLevel = false;
@@ -204,7 +208,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
-                    if (ticArray[i][j] == turn) {
+                    if (ticArray[i][j] == this.turn) {
                         result6++;
                         if (result6 == this.pattern) {
                             this.newLevel = false;
@@ -223,13 +227,11 @@ public class TicTacToe {
     public void result() {
         renderStructure();
         System.out.printf("%s%sUser %s won the game.\n", MSS_RED_BG, MSS_WHITE, turn);
-        System.out.println(MSS_RED_BG + MSS_WHITE + "Thanks For Playing.");
+        System.out.println(MSS_RED_BG + MSS_WHITE + "Thanks For Playing." + MSS_RESET);
     }
 
     // Start main game
     public void start() {
-        // Game starts with user 1
-        turn = 'X';
         init();
         validateStructure();
         while (this.newLevel) {
