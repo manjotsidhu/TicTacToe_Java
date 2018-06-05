@@ -5,8 +5,8 @@ import static tictactoe.Colors.*;
 
 /**
  * TODOs : 
- * 1 > ticArray to char or to generics
- * 2 > user defined characters and colors
+ * 1 > ticArray to char or to generics (done)
+ * 2 > user defined characters and colors (wip)
  * 3 > more in-game color formattings
  * 3 > GUI 
  * 5 > Web interface
@@ -16,7 +16,7 @@ import static tictactoe.Colors.*;
 public class TicTacToe {
 
     // Parameterss
-    private int ticLength;
+    private int ticSize;
     // ticArray predefined
     /* private int[][] ticArray = {{1,2,1,1,1,2},
                                 {7,1,9,1,1,2},
@@ -26,8 +26,8 @@ public class TicTacToe {
                                 {7,8,9,1,1,2}}; */
     private char[][] ticArray;
     
-    private char u1 = 'X';
-    private char u2 = 'O';
+    private char u1;
+    private char u2;
 
     private char turn = u1;
     private boolean newLevel = true;
@@ -39,19 +39,29 @@ public class TicTacToe {
 
     // Init game parameters
     public void init() {
+        
         System.out.print(MSS_GREEN + "Enter Size/Order: " + MSS_RESET);
 
-        this.ticLength = scan.nextInt();
-        // ticLength predefined
-        //this.ticLength = 6;
+        this.ticSize = scan.nextInt();
+        // ticSize predefined
+        // this.ticSize = 6;
 
-        ticArray = new char[ticLength][ticLength];
-
+        ticArray = new char[ticSize][ticSize];
+        
+        System.out.print(MSS_GREEN + "User 1, select your character" + MSS_RESET);
+        this.u1 = scan.next(".").charAt(0);
+        
+        System.out.print(MSS_GREEN + "User 2, select your character" + MSS_RESET);
+        this.u2 = scan.next(".").charAt(0);
+        
+        // u1 and u2 predefined
+        // this.u1 = 'X';
+        // this.u2 = 'O';
     }
     
     // Validate array size/order values
     public void validateStructure() {
-        if(this.ticLength < 3 || this.ticLength > 9) {
+        if(this.ticSize < 3 || this.ticSize > 9) {
             System.out.println(MSS_RED + "TicTacToe size cannot be less than 3 and more than 9" + MSS_RESET);
             System.out.println(MSS_RED + "Please try again" + MSS_RESET);
             init();
@@ -60,17 +70,17 @@ public class TicTacToe {
 
     // Render TicTacToe Structure
     public void renderStructure() {
-        System.out.print(new String(new char[this.ticLength]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
+        System.out.print(new String(new char[this.ticSize]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
         System.out.println("+");
 
-        for (int i = 0; i < this.ticLength; i++) {
-            for (int j = 0; j < this.ticLength; j++) {
+        for (int i = 0; i < this.ticSize; i++) {
+            for (int j = 0; j < this.ticSize; j++) {
                 System.out.print(MSS_GREEN_BG + MSS_BLACK + "| " + ticArray[i][j] + " ");
             }
             System.out.println("|");
         }
 
-        System.out.print(new String(new char[this.ticLength]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
+        System.out.print(new String(new char[this.ticSize]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
         System.out.println("+" + MSS_RESET);
 
     }
@@ -78,8 +88,8 @@ public class TicTacToe {
     // if Array isEmpty (not used for now)
     /* public boolean isEmpty() {
         int empty = 0;
-        for (int i = 0; i < this.ticLength; i++) {
-            for (int j = 0; j < this.ticLength; j++) {
+        for (int i = 0; i < this.ticSize; i++) {
+            for (int j = 0; j < this.ticSize; j++) {
                 if (ticArray[i][j] != 0) {
                     empty++;
                 }
@@ -90,7 +100,7 @@ public class TicTacToe {
     
     // Validate Array indexes
     public void validateInput(int i, int j) {
-        if(i > ticLength-1 || j > ticLength-1) {
+        if(i > ticSize-1 || j > ticSize-1) {
             System.out.println(MSS_RED + "Please input valid index number" + MSS_RESET);
             restart = false;
         } else if(i == 0 && j == 0) {
@@ -124,7 +134,7 @@ public class TicTacToe {
         int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0, 
             result6 = 0;
 
-        for (int i = 0; i < this.ticLength; i++) {
+        for (int i = 0; i < this.ticSize; i++) {
             if (ticArray[i][i2] == turn) {
                 result1++;
                 if (result1 == this.pattern) {
@@ -158,8 +168,8 @@ public class TicTacToe {
                 result3 = 0;
             }
 
-            for (int j = 0; j < this.ticLength; j++) {
-                if (i + j == this.ticLength - 1) {
+            for (int j = 0; j < this.ticSize; j++) {
+                if (i + j == this.ticSize - 1) {
                     if (ticArray[i][j] == turn) {
                         result4++;
                         if (result4 == this.pattern) {
@@ -173,7 +183,7 @@ public class TicTacToe {
                 }
             }
 
-            for (int j = 0; j < this.ticLength; j++) {
+            for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == i1 + i2) {
                     if (ticArray[i][j] == turn) {
                         result5++;
@@ -188,7 +198,7 @@ public class TicTacToe {
                 }
             }
 
-            for (int j = 0; j < this.ticLength; j++) {
+            for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
                     if (ticArray[i][j] == turn) {
                         result6++;
