@@ -110,10 +110,11 @@ public class TicTacToe {
         if(i > ticSize-1 || j > ticSize-1) {
             System.out.println(MSS_RED + "Please input valid index number" + MSS_RESET);
             this.restart = false;
-        } else if(i == 0 && j == 0) {
+        } // foreground fix :( to not start indexes from 0  
+        /*else if(i == 0 && j == 0) {
             System.out.println(MSS_RED + "Invalid index, indexes starts from 1(inclusive)" + MSS_RESET);
             this.restart = false;
-        } else if(ticArray[i][j] != 0) {
+        }*/ else if(ticArray[i][j] != 0) {
             System.out.println(MSS_RED + i + " " + j + " index already has " + ticArray[i][j] + " value." + MSS_RESET);
             this.restart = false;
         } else {
@@ -239,6 +240,9 @@ public class TicTacToe {
             userInput();
             int input1 = scan.nextInt();
             int input2 = scan.nextInt();
+            // foreground fix :( to not start indexes from 0
+            input1 = input1 - 1;
+            input2 = input2 - 1;
             validateInput(input1, input2);
             if(!restart) { continue; } 
             setValue(input1, input2);
