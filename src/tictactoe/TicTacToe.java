@@ -48,10 +48,10 @@ public class TicTacToe {
 
         ticArray = new char[ticSize][ticSize];
         
-        System.out.print(MSS_GREEN + "User 1, select your character" + MSS_RESET);
+        System.out.print(MSS_GREEN + "User 1, select your character: " + MSS_RESET);
         this.u1 = scan.next(".").charAt(0);
         
-        System.out.print(MSS_GREEN + "User 2, select your character" + MSS_RESET);
+        System.out.print(MSS_GREEN + "User 2, select your character: " + MSS_RESET);
         this.u2 = scan.next(".").charAt(0);
         
         // u1 and u2 predefined
@@ -71,13 +71,17 @@ public class TicTacToe {
     // Render TicTacToe Structure
     public void renderStructure() {
         System.out.print(new String(new char[this.ticSize]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
-        System.out.println("+");
+        System.out.println("+" + MSS_RESET);
 
         for (int i = 0; i < this.ticSize; i++) {
             for (int j = 0; j < this.ticSize; j++) {
-                System.out.print(MSS_GREEN_BG + MSS_BLACK + "| " + ticArray[i][j] + " ");
+                if(ticArray[i][j] == 0) {
+                    System.out.print(MSS_GREEN_BG + MSS_BLACK + "| " + "  ");
+                } else {
+                    System.out.print(MSS_GREEN_BG + MSS_BLACK + "| " + ticArray[i][j] + " ");
+                }
             }
-            System.out.println("|");
+            System.out.println("|" + MSS_RESET);
         }
 
         System.out.print(new String(new char[this.ticSize]).replace("\0", MSS_GREEN_BG + MSS_BLACK + "+---"));
