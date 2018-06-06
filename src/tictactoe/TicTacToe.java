@@ -5,7 +5,7 @@ import static tictactoe.Colors.*;
 
 /**
  * TODOs : 
- * 1 > Extend game to be played for more than 2 players
+ * 1 > Extend game to be played for more than 2 players (done) (testing)
  * 2 > Undo/Redo
  * 3 > Import and export gameplay (Probably as JSON)
  *
@@ -24,13 +24,12 @@ public class TicTacToe {
                                 {7,8,9,1,1,2}}; */
     private char[][] ticArray;
     
-    private char u1Char;
-    private char u2Char;
-    private String u1Color;
-    private String u2Color;
+    private char[] userChar;
+    private String[] userColor;
 
     private char turnChar;
     private String turnColor;
+    private int head;
     private boolean newLevel = true;
     private final int pattern = 3;
     private boolean restart = true;
@@ -49,58 +48,53 @@ public class TicTacToe {
         ticArray = new char[ticSize][ticSize];
     }
     
-    // Set User charater and color properties
+    // Set players playing this game
+    public void setUsers() {
+        System.out.print(GREEN + "Number of players: " + RESET);
+        int players = scan.nextInt();
+        userChar = new char[players];
+        userColor = new String[players];
+        
+        this.head = 0;
+    }
+    // Set Player charater and color properties
     public void setUserProp() {
-        System.out.print(GREEN + "User 1, enter your character: " + RESET);
-        this.u1Char = scan.next(".").charAt(0);
-        
-        System.out.print(GREEN + "User 2, enter your character: " + RESET);
-        this.u2Char = scan.next(".").charAt(0);
-        
-        // u1Char and u2Char predefined
-        // this.u1Char = 'X';
-        // this.u2Char = 'O';
-        
-        System.out.print(GREEN + "User 1, enter your color: " + RESET);
-        this.u1Color = scan.next();
-                
-        System.out.print(GREEN + "User 2, enter your color: " + RESET);
-        this.u2Color = scan.next();
+        for(int i = 0; i < userChar.length; i++) {
+            int n = i + 1;
+            System.out.print(GREEN + "Player " + n + ", enter your character: " + RESET);
+            this.userChar[i] = scan.next(".").charAt(0);
+            
+            System.out.print(GREEN + "Player " + n + ", enter your color: " + RESET);
+            this.userColor[i] = scan.next();
+        }
     }
 
-    // Custom User Colors
+    // Custom Player Colors
     public void userColors() {
-        switch(u1Color.trim().toUpperCase()) {
-            case "BLACK" : u1Color = BLACK; break;
-            case "RED" : u1Color = RED; break;
-            case "GREEN" : u1Color = GREEN; break;
-            case "YELLOW" : u1Color = GREEN; break;
-            case "BLUE" : u1Color = BLUE; break;
-            case "PURPLE" : u1Color = PURPLE; break;
-            case "CYAN" : u1Color = CYAN; break;
-            case "WHITE" : u1Color = WHITE; break;
-        }
-        switch(u2Color.trim().toUpperCase()) {
-            case "BLACK" : u2Color = BLACK; break;
-            case "RED" : u2Color = RED; break;
-            case "GREEN" : u2Color = GREEN; break;
-            case "YELLOW" : u2Color = GREEN; break;
-            case "BLUE" : u2Color = BLUE; break;
-            case "PURPLE" : u2Color = PURPLE; break;
-            case "CYAN" : u2Color = CYAN; break;
-            case "WHITE" : u2Color = WHITE; break;
+        for(int i = 0; i < userColor.length; i++) {
+            switch(userColor[i].toUpperCase()) {
+                case "BLACK" : userColor[i] = BLACK; break;
+                case "RED" : userColor[i] = RED; break;
+                case "GREEN" : userColor[i] = GREEN; break;
+                case "YELLOW" : userColor[i] = YELLOW; break;
+                case "BLUE" : userColor[i] = BLUE; break;
+                case "PURPLE" : userColor[i] = PURPLE; break;
+                case "CYAN" : userColor[i] = CYAN; break;
+                case "WHITE" : userColor[i] = WHITE; break;
+            }
         }
     }
     
     // Init in-game parameters
     public void init() {
         setSize();
+        setUsers();
         setUserProp();
         userColors();
         
         // Game starts with first user
-        this.turnChar = u1Char;
-        this.turnColor = u1Color;
+        this.turnChar = userChar[0];
+        this.turnColor = userColor[0];
     }
     
     // Validate array size/order values
@@ -132,19 +126,6 @@ public class TicTacToe {
         System.out.println("+" + RESET);
 
     }
-
-    // if Array isEmpty (not used for now)
-    /* public boolean isEmpty() {
-        int empty = 0;
-        for (int i = 0; i < this.ticSize; i++) {
-            for (int j = 0; j < this.ticSize; j++) {
-                if (ticArray[i][j] != 0) {
-                    empty++;
-                }
-            }
-        }
-        return empty == 0;
-    } */
     
     // Validate Array indexes
     public void validateInput(int i, int j) {
@@ -165,18 +146,24 @@ public class TicTacToe {
 
     // Ask user's input
     public void userInput() {
-        System.out.printf("%sUser %s, make your move: %s", turnColor, this.turnChar, RESET);
+        System.out.printf("%sPlayer %s, make your move: %s", turnColor, this.turnChar, RESET);
     }
 
-    // Implement User's turn in TicTacToe
+    // Implement Player's turn in TicTacToe
     public void setValue(int i, int j) {
         ticArray[i][j] = this.turnChar;
     }
 
     // Set next user's turn and color accordingly
     public void nextTurn() {
-        this.turnChar = (this.turnChar == this.u1Char) ? this.u2Char : this.u1Char;
-        this.turnColor = (this.turnColor == this.u1Color) ? this.u2Color : this.u1Color;
+
+        if(head == userChar.length-1) {
+            head = 0;
+        } else {
+            head++;
+        }
+        this.turnChar = userChar[head];
+        this.turnColor = userColor[head];
     }
 
     // Game Logic 
@@ -269,7 +256,7 @@ public class TicTacToe {
     // Results
     public void result() {
         renderStructure();
-        System.out.printf("%s%sUser %s won the game.\n", RED_BG, WHITE, turnChar);
+        System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
         System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
     }
 
