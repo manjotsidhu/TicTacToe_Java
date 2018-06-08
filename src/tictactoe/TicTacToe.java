@@ -1,6 +1,13 @@
 package tictactoe;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
+import org.apache.commons.io.FileUtils;
 import static tictactoe.Colors.*;
 
 /**
@@ -13,7 +20,7 @@ import static tictactoe.Colors.*;
  */
 public class TicTacToe {
 
-    // Parameterss
+    // Parameters
     private int ticSize;
     // ticArray predefined
     /* private int[][] ticArray = {{1,2,1,1,1,2},
@@ -33,9 +40,53 @@ public class TicTacToe {
     private boolean newLevel = true;
     private final int pattern = 3;
     private boolean restart = true;
-
+    private boolean importJson = true;
+    private boolean exportJson = true;
+    
+    ArrayList<Integer> input1 = new ArrayList<>();
+    ArrayList<Integer> input2 = new ArrayList<>();
+    
     // Scanner
     Scanner scan = new Scanner(System.in);
+    
+    // Json import and export ask
+    public void jsonInit() {
+        System.out.print(GREEN + "Do you want to load game params from Json:[Y/n] " + RESET);
+        char in = scan.next(".").charAt(0);
+        if(in == 'Y') {
+            this.importJson = true;
+        } else if(in == 'n') {
+            this.importJson = false;
+        } else {
+            System.out.println(RED + "Enter correct response dumb" + RESET);
+            jsonInit();
+        }
+        
+        System.out.print(GREEN + "Do you want to export game params to Json:[Y/n] " + RESET);
+        char out = scan.next(".").charAt(0);
+        if(out == 'Y') {
+            this.exportJson = true;
+        } else if(out == 'n') {
+            this.exportJson = false;
+        } else {
+            System.out.println(RED + "Enter correct response dumb" + RESET);
+            jsonInit();
+        }
+    }
+    
+    // Json import
+    public void jsonRead() throws FileNotFoundException, IOException {
+        String str = FileUtils.readFileToString(new File("input.json"));
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        
+        JSON size = gson.fromJson(str, JSON.class);
+        this.ticSize = size.getSize();
+        //this.ticArray = size.getTicTacToe();
+        this.userChar = size.getcharacters();
+        this.userColor = size.getColors();
+        this.input1 = size.getMovesX();
+        this.input2 = size.getMovesY();
+    }
     
     // Set ticArray size
     public void setSize() {
@@ -86,11 +137,17 @@ public class TicTacToe {
     }
     
     // Init in-game parameters
-    public void init() {
-        setSize();
-        setUsers();
-        setUserProp();
-        userColors();
+    public void init() throws IOException {
+        jsonInit();
+        if(importJson) {
+            jsonRead();
+            this.ticArray = new char[ticSize][ticSize];
+        } else {
+            setSize();
+            setUsers();
+            setUserProp();
+            userColors();
+        }
         
         // Game starts with first user
         this.turnChar = userChar[0];
@@ -146,7 +203,7 @@ public class TicTacToe {
 
     // Ask user's input
     public void userInput() {
-        System.out.printf("%sPlayer %s, make your move: %s", turnColor, this.turnChar, RESET);
+        System.out.printf("%sPlayer %s, make your move: %s \n", turnColor, this.turnChar, RESET);
     }
 
     // Implement Player's turn in TicTacToe
@@ -168,7 +225,7 @@ public class TicTacToe {
 
     // Game Logic 
     public void logic(int i1, int i2) {
-        // my bad :/
+        // my bad :(
         int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0, 
             result6 = 0;
 
@@ -259,28 +316,43 @@ public class TicTacToe {
         System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
         System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
     }
+    
+    // Gson: export to json
+    public void jsonWrite() throws IOException {
+        JSON games = new JSON(this.ticSize,this.ticArray,this.userChar,this.userColor,this.input1,this.input2);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        String out = gson.toJson(games);
+        FileUtils.writeStringToFile(new File("output.json"), out);
+    }
 
     // Start main game
-    public void start() {
+    public void start() throws IOException {
         init();
         validateStructure();
+        int move = 0;
         while (this.newLevel) {
             renderStructure();
             userInput();
-            int input1 = scan.nextInt();
-            int input2 = scan.nextInt();
-            // foreground fix :( to not start indexes from 0
-            input1 = input1 - 1;
-            input2 = input2 - 1;
-            validateInput(input1, input2);
-            if(!restart) { continue; } 
-            setValue(input1, input2);
-            logic(input1, input2);
+            
+            if(!importJson) {
+                input1.add(scan.nextInt()-1);
+                input2.add(scan.nextInt()-1);
+            }
+            
+            // foreground fix :( to not start indexes from 0 by adding -1 ^
+            validateInput(input1.get(move), input2.get(move));
+            if(!restart) continue; 
+            setValue(input1.get(move), input2.get(move));
+            logic(input1.get(move), input2.get(move));
+            
             nextTurn();
+            move++;
         }
+        if(exportJson) jsonWrite();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         TicTacToe game = new TicTacToe();
         game.start();
     }
