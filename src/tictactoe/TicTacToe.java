@@ -280,6 +280,8 @@ public class TicTacToe {
                     }
                 }
             }
+            
+            if(!this.newLevel) break;
 
             for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == i1 + i2) {
@@ -295,6 +297,8 @@ public class TicTacToe {
                     }
                 }
             }
+            
+            if(!this.newLevel) break;
 
             for (int j = 0; j < this.ticSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
@@ -310,6 +314,7 @@ public class TicTacToe {
                     }
                 }
             }
+            if(!this.newLevel) break;
         }
     }
 
