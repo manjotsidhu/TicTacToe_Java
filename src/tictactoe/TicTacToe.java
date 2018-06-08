@@ -194,7 +194,10 @@ public class TicTacToe {
             System.out.println(RED + "Invalid index, indexes starts from 1(inclusive)" + RESET);
             this.restart = false;
         }*/ else if(ticArray[i][j] != 0) {
-            System.out.println(RED + i + " " + j + " index already has " + ticArray[i][j] + " value." + RESET);
+            // foreground fix :( to not start indexes from 0
+            int fix1 = i + 1;
+            int fix2 = i + 1;
+            System.out.println(RED + fix1 + " " + fix2 + " index already has " + ticArray[i][j] + " value." + RESET);
             this.restart = false;
         } else {
             this.restart = true;
@@ -342,7 +345,7 @@ public class TicTacToe {
             
             // foreground fix :( to not start indexes from 0 by adding -1 ^
             validateInput(input1.get(move), input2.get(move));
-            if(!restart) continue; 
+            if(!restart) { move++; continue; } 
             setValue(input1.get(move), input2.get(move));
             logic(input1.get(move), input2.get(move));
             
