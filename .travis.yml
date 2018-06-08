@@ -4,14 +4,5 @@ jdk:
   - oraclejdk8
   
 script:
-  - cd src
-  - javac tictactoe/TicTacToe.java
-  - java tictactoe/TicTacToe
-  - M
-  - N
-  - 1 1
-  - 1 0
-  - 2 2
-  - 2 0
-  - 3 3
+  - ./gradlew check
   
