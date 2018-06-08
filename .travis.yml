@@ -4,6 +4,6 @@ jdk:
   - oraclejdk8
   
 script:
-  - sudo chmod -R 777 *
+  - sudo chmod +x gradlew
   - ./gradlew check
   
