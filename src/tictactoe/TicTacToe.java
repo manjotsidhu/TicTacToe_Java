@@ -13,7 +13,21 @@ import java.util.Scanner;
 import org.apache.commons.io.FileUtils;
 import static tictactoe.Colors.*;
 
+/**
+ * TicTacToe Object is the main and the only component in the functionality of
+ * this TicTacToe game
+ *
+ * @version 0.1
+ * @author ManjotSidhu
+ */
 public class TicTacToe {
+
+    /**
+     * empty
+     */
+    public TicTacToe() {
+        // empty
+    }
 
     // Parameters
     private int ticSize;
@@ -44,7 +58,9 @@ public class TicTacToe {
     // Scanner
     Scanner scan = new Scanner(System.in);
 
-    // Json import and export ask
+    /**
+     * Get user's input to import/export JSON files
+     */
     public void jsonInit() {
         System.out.print(GREEN + "Do you want to load game params from Json:[Y/n] " + RESET);
         char in = scan.next(".").charAt(0);
@@ -73,7 +89,13 @@ public class TicTacToe {
         }
     }
 
-    // Json import
+    /**
+     * Reads the <b>input.json</b> file, parse it to a String and sets variables
+     * to their superclass variables
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void jsonRead() throws FileNotFoundException, IOException {
         String str = FileUtils.readFileToString(new File("input.json"));
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -87,7 +109,9 @@ public class TicTacToe {
         this.input2 = size.getMovesY();
     }
 
-    // Set ticArray size
+    /**
+     * Inputs size/order of ticArray array and initialize the array
+     */
     public void setSize() {
         System.out.print(GREEN + "Enter Size/Order: " + RESET);
 
@@ -98,7 +122,9 @@ public class TicTacToe {
         ticArray = new char[ticSize][ticSize];
     }
 
-    // Set players playing this game
+    /**
+     * Inputs number of players playing this game
+     */
     public void setUsers() {
         System.out.print(GREEN + "Number of players: " + RESET);
         int players = scan.nextInt();
@@ -108,7 +134,9 @@ public class TicTacToe {
         this.head = 0;
     }
 
-    // Set Player charater and color properties
+    /**
+     * Inputs player-wise characters and colors to choose from
+     */
     public void setUserProp() {
         for (int i = 0; i < userChar.length; i++) {
             int n = i + 1;
@@ -120,7 +148,10 @@ public class TicTacToe {
         }
     }
 
-    // Custom Player Colors
+    /**
+     * Sets the player's color to the ANSI color variable referred in Colors
+     * class
+     */
     public void userColors() {
         for (int i = 0; i < userColor.length; i++) {
             switch (userColor[i].toUpperCase()) {
@@ -152,6 +183,11 @@ public class TicTacToe {
         }
     }
 
+    /**
+     * Runs all the methods used to fetch all the needed params
+     *
+     * @throws IOException
+     */
     // Init in-game parameters
     public void init() throws IOException {
         jsonInit();
@@ -170,7 +206,9 @@ public class TicTacToe {
         this.turnColor = userColor[0];
     }
 
-    // Validate array size/order values
+    /**
+     * Validates the <b>ticSize</b> param inputted by the player
+     */
     public void validateStructure() {
         if (this.ticSize < 3 || this.ticSize > 9) {
             System.out.println(RED + "TicTacToe size cannot be less than 3 and more than 9" + RESET);
@@ -179,7 +217,9 @@ public class TicTacToe {
         }
     }
 
-    // Render TicTacToe Structure
+    /**
+     * Renders/Creates the main game <b>board</b>
+     */
     public void renderStructure() {
         System.out.print(new String(new char[this.ticSize]).replace("\0", GREEN_BG + BLACK + "+---"));
         System.out.println("+" + RESET);
@@ -200,7 +240,12 @@ public class TicTacToe {
 
     }
 
-    // Validate Array indexes
+    /**
+     * Validates the index params inputted from the player
+     *
+     * @param i Integer index at X<sup>th</sup> position
+     * @param j Integer index at Y<sup>th</sup> position
+     */
     public void validateInput(int i, int j) {
         if (i > ticSize - 1 || j > ticSize - 1) {
             System.out.println(RED + "Please input valid index number" + RESET);
@@ -220,17 +265,27 @@ public class TicTacToe {
         }
     }
 
-    // Ask user's input
+    /**
+     * Simply prints the <i> make your move </i> to System.out
+     */
     public void userInput() {
         System.out.printf("%sPlayer %s, make your move: %s \n", turnColor, this.turnChar, RESET);
     }
 
-    // Implement Player's turn in TicTacToe
+    /**
+     * Sets values inputted from the user to the main ticArray
+     *
+     * @param i Integer index at i<sup>th</sup>row
+     * @param j Integer index at j<sup>th</sup>column
+     */
     public void setValue(int i, int j) {
         ticArray[i][j] = this.turnChar;
     }
 
-    // Set next user's turn and color accordingly
+    /**
+     * Updates <b>current</b> character and color to next user's turn
+     * accordingly
+     */
     public void nextTurn() {
 
         if (head == userChar.length - 1) {
@@ -242,7 +297,12 @@ public class TicTacToe {
         this.turnColor = userColor[head];
     }
 
-    // Game Logic 
+    /**
+     * Main game algorithm used to validate the goal pattern of the Player
+     *
+     * @param i1 Integer index at X<sup>th</sup> position
+     * @param i2 Integer index at Y<sup>th</sup> position
+     */
     public void logic(int i1, int i2) {
         // my bad :(
         int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0,
@@ -340,14 +400,21 @@ public class TicTacToe {
         }
     }
 
-    // Results
+    /**
+     * Prints the congratulations message on win
+     */
     public void result() {
         renderStructure();
         System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
         System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
     }
 
-    // Gson: export to json
+    /**
+     * Pushes the variables to JSON object and return JSON format in a String
+     * and Write to <b>output.json</b>
+     *
+     * @throws IOException
+     */
     public void jsonWrite() throws IOException {
         JSON games = new JSON(this.ticSize, this.ticArray, this.userChar, this.userColor, this.input1, this.input2);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -356,7 +423,11 @@ public class TicTacToe {
         FileUtils.writeStringToFile(new File("output.json"), out);
     }
 
-    // Start main game
+    /**
+     * Iterates every move till winning
+     *
+     * @throws IOException
+     */
     public void start() throws IOException {
         init();
         validateStructure();
@@ -387,6 +458,11 @@ public class TicTacToe {
         }
     }
 
+    /**
+     * Creates TicTacToe's object and runs <b>start</b> method
+     *
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         TicTacToe game = new TicTacToe();
         game.start();
