@@ -30,23 +30,24 @@ public class TicTacToe {
     }
 
     // Parameters
-    private int ticSize;
-    // ticArray predefined
-    /* private int[][] ticArray = {{1,2,1,1,1,2},
+    
+    // board predefined
+    /* private int[][] board = {{1,2,1,1,1,2},
                                 {7,1,9,1,1,2},
                                 {1,8,9,1,1,2},
                                 {7,8,9,1,1,2},
                                 {7,8,9,1,1,2},
                                 {7,8,9,1,1,2}}; */
-    private char[][] ticArray;
+    private char[][] board;
+    private int boardSize;
 
-    private char[] userChar;
-    private String[] userColor;
+    private char[] playerChar;
+    private String[] playerColor;
 
     private char turnChar;
     private String turnColor;
     private int head;
-    private boolean newLevel = true;
+    private boolean doNextMove = true;
     private final int pattern = 3;
     private boolean restart = true;
     private boolean importJson = true;
@@ -59,7 +60,7 @@ public class TicTacToe {
     Scanner scan = new Scanner(System.in);
 
     /**
-     * Get user's input to import/export JSON files
+     * Get player's input to import/export JSON files
      */
     public void jsonInit() {
         System.out.print(GREEN + "Do you want to load game params from Json:[Y/n] " + RESET);
@@ -72,7 +73,7 @@ public class TicTacToe {
                 this.importJson = false;
                 break;
             default:
-                System.out.println(RED + "Enter correct response dumb" + RESET);
+                System.out.println(RED + "Enter correct response" + RESET);
                 jsonInit();
                 break;
         }
@@ -90,7 +91,7 @@ public class TicTacToe {
     }
 
     /**
-     * Reads the <b>input.json</b> file, parse it to a String and sets variables
+     * Reads the <b>input.json</b> file, parses it to a String and sets variables
      * to their superclass variables
      *
      * @throws FileNotFoundException
@@ -101,25 +102,25 @@ public class TicTacToe {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         JSON size = gson.fromJson(str, JSON.class);
-        this.ticSize = size.getSize();
-        //this.ticArray = size.getTicTacToe();
-        this.userChar = size.getcharacters();
-        this.userColor = size.getColors();
+        this.boardSize = size.getSize();
+        //this.board = size.getTicTacToe();
+        this.playerChar = size.getcharacters();
+        this.playerColor = size.getColors();
         this.input1 = size.getMovesX();
         this.input2 = size.getMovesY();
     }
 
     /**
-     * Inputs size/order of ticArray array and initialize the array
+     * Inputs size/order of board array and initialize the array
      */
     public void setSize() {
         System.out.print(GREEN + "Enter Size/Order: " + RESET);
 
-        this.ticSize = scan.nextInt();
-        // ticSize predefined
-        // this.ticSize = 6;
+        this.boardSize = scan.nextInt();
+        // boardSize predefined
+        // this.boardSize = 6;
 
-        ticArray = new char[ticSize][ticSize];
+        board = new char[boardSize][boardSize];
     }
 
     /**
@@ -128,8 +129,8 @@ public class TicTacToe {
     public void setUsers() {
         System.out.print(GREEN + "Number of players: " + RESET);
         int players = scan.nextInt();
-        userChar = new char[players];
-        userColor = new String[players];
+        playerChar = new char[players];
+        playerColor = new String[players];
 
         this.head = 0;
     }
@@ -138,13 +139,13 @@ public class TicTacToe {
      * Inputs player-wise characters and colors to choose from
      */
     public void setUserProp() {
-        for (int i = 0; i < userChar.length; i++) {
+        for (int i = 0; i < playerChar.length; i++) {
             int n = i + 1;
             System.out.print(GREEN + "Player " + n + ", enter your character: " + RESET);
-            this.userChar[i] = scan.next(".").charAt(0);
+            this.playerChar[i] = scan.next(".").charAt(0);
 
             System.out.print(GREEN + "Player " + n + ", enter your color: " + RESET);
-            this.userColor[i] = scan.next();
+            this.playerColor[i] = scan.next();
         }
     }
 
@@ -152,32 +153,32 @@ public class TicTacToe {
      * Sets the player's color to the ANSI color variable referred in Colors
      * class
      */
-    public void userColors() {
-        for (int i = 0; i < userColor.length; i++) {
-            switch (userColor[i].toUpperCase()) {
+    public void playerColors() {
+        for (int i = 0; i < playerColor.length; i++) {
+            switch (playerColor[i].toUpperCase()) {
                 case "BLACK":
-                    userColor[i] = BLACK;
+                    playerColor[i] = BLACK;
                     break;
                 case "RED":
-                    userColor[i] = RED;
+                    playerColor[i] = RED;
                     break;
                 case "GREEN":
-                    userColor[i] = GREEN;
+                    playerColor[i] = GREEN;
                     break;
                 case "YELLOW":
-                    userColor[i] = YELLOW;
+                    playerColor[i] = YELLOW;
                     break;
                 case "BLUE":
-                    userColor[i] = BLUE;
+                    playerColor[i] = BLUE;
                     break;
                 case "PURPLE":
-                    userColor[i] = PURPLE;
+                    playerColor[i] = PURPLE;
                     break;
                 case "CYAN":
-                    userColor[i] = CYAN;
+                    playerColor[i] = CYAN;
                     break;
                 case "WHITE":
-                    userColor[i] = WHITE;
+                    playerColor[i] = WHITE;
                     break;
             }
         }
@@ -193,24 +194,24 @@ public class TicTacToe {
         jsonInit();
         if (importJson) {
             jsonRead();
-            this.ticArray = new char[ticSize][ticSize];
+            this.board = new char[boardSize][boardSize];
         } else {
             setSize();
             setUsers();
             setUserProp();
-            userColors();
+            playerColors();
         }
 
-        // Game starts with first user
-        this.turnChar = userChar[0];
-        this.turnColor = userColor[0];
+        // Game starts with first player
+        this.turnChar = playerChar[0];
+        this.turnColor = playerColor[0];
     }
 
     /**
-     * Validates the <b>ticSize</b> param inputted by the player
+     * Validates the <b>boardSize</b> param inputted by the player
      */
     public void validateStructure() {
-        if (this.ticSize < 3 || this.ticSize > 9) {
+        if (this.boardSize < 3 || this.boardSize > 9) {
             System.out.println(RED + "TicTacToe size cannot be less than 3 and more than 9" + RESET);
             System.out.println(RED + "Please try again" + RESET);
             setSize();
@@ -221,21 +222,21 @@ public class TicTacToe {
      * Renders/Creates the main game <b>board</b>
      */
     public void renderStructure() {
-        System.out.print(new String(new char[this.ticSize]).replace("\0", GREEN_BG + BLACK + "+---"));
+        System.out.print(new String(new char[this.boardSize]).replace("\0", GREEN_BG + BLACK + "+---"));
         System.out.println("+" + RESET);
 
-        for (int i = 0; i < this.ticSize; i++) {
-            for (int j = 0; j < this.ticSize; j++) {
-                if (ticArray[i][j] == 0) {
+        for (int i = 0; i < this.boardSize; i++) {
+            for (int j = 0; j < this.boardSize; j++) {
+                if (board[i][j] == 0) {
                     System.out.print(GREEN_BG + BLACK + "| " + "  ");
                 } else {
-                    System.out.print(GREEN_BG + BLACK + "| " + ticArray[i][j] + " ");
+                    System.out.print(GREEN_BG + BLACK + "| " + board[i][j] + " ");
                 }
             }
             System.out.println("|" + RESET);
         }
 
-        System.out.print(new String(new char[this.ticSize]).replace("\0", GREEN_BG + BLACK + "+---"));
+        System.out.print(new String(new char[this.boardSize]).replace("\0", GREEN_BG + BLACK + "+---"));
         System.out.println("+" + RESET);
 
     }
@@ -247,18 +248,18 @@ public class TicTacToe {
      * @param j Integer index at Y<sup>th</sup> position
      */
     public void validateInput(int i, int j) {
-        if (i > ticSize - 1 || j > ticSize - 1) {
+        if (i > boardSize - 1 || j > boardSize - 1) {
             System.out.println(RED + "Please input valid index number" + RESET);
             this.restart = false;
         } // foreground fix :( to not start indexes from 0  
         /*else if(i == 0 && j == 0) {
             System.out.println(RED + "Invalid index, indexes starts from 1(inclusive)" + RESET);
             this.restart = false;
-        }*/ else if (ticArray[i][j] != 0) {
+        }*/ else if (board[i][j] != 0) {
             // foreground fix :( to not start indexes from 0
             int fix1 = i + 1;
             int fix2 = i + 1;
-            System.out.println(RED + fix1 + " " + fix2 + " index already has " + ticArray[i][j] + " value." + RESET);
+            System.out.println(RED + fix1 + " " + fix2 + " index already has " + board[i][j] + " value." + RESET);
             this.restart = false;
         } else {
             this.restart = true;
@@ -266,35 +267,35 @@ public class TicTacToe {
     }
 
     /**
-     * Simply prints the <i> make your move </i> to System.out
+     * Simply prints the <i> make your move </i> to System.out console
      */
-    public void userInput() {
+    public void askInput() {
         System.out.printf("%sPlayer %s, make your move: %s \n", turnColor, this.turnChar, RESET);
     }
 
     /**
-     * Sets values inputted from the user to the main ticArray
+     * Sets values inputted from the player to the main board
      *
      * @param i Integer index at i<sup>th</sup>row
      * @param j Integer index at j<sup>th</sup>column
      */
     public void setValue(int i, int j) {
-        ticArray[i][j] = this.turnChar;
+        board[i][j] = this.turnChar;
     }
 
     /**
-     * Updates <b>current</b> character and color to next user's turn
+     * Updates <b>current</b> character and color to next player's turn
      * accordingly
      */
     public void nextTurn() {
 
-        if (head == userChar.length - 1) {
+        if (head == playerChar.length - 1) {
             head = 0;
         } else {
             head++;
         }
-        this.turnChar = userChar[head];
-        this.turnColor = userColor[head];
+        this.turnChar = playerChar[head];
+        this.turnColor = playerColor[head];
     }
 
     /**
@@ -308,11 +309,11 @@ public class TicTacToe {
         int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0,
                 result6 = 0;
 
-        for (int i = 0; i < this.ticSize; i++) {
-            if (ticArray[i][i2] == this.turnChar) {
+        for (int i = 0; i < this.boardSize; i++) {
+            if (board[i][i2] == this.turnChar) {
                 result1++;
                 if (result1 == this.pattern) {
-                    this.newLevel = false;
+                    this.doNextMove = false;
                     result();
                     break;
                 }
@@ -320,10 +321,10 @@ public class TicTacToe {
                 result1 = 0;
             }
 
-            if (ticArray[i1][i] == this.turnChar) {
+            if (board[i1][i] == this.turnChar) {
                 result2++;
                 if (result2 == this.pattern) {
-                    this.newLevel = false;
+                    this.doNextMove = false;
                     result();
                     break;
                 }
@@ -331,10 +332,10 @@ public class TicTacToe {
                 result2 = 0;
             }
 
-            if (ticArray[i][i] == this.turnChar) {
+            if (board[i][i] == this.turnChar) {
                 result3++;
                 if (result3 == this.pattern) {
-                    this.newLevel = false;
+                    this.doNextMove = false;
                     result();
                     break;
                 }
@@ -342,12 +343,12 @@ public class TicTacToe {
                 result3 = 0;
             }
 
-            for (int j = 0; j < this.ticSize; j++) {
-                if (i + j == this.ticSize - 1) {
-                    if (ticArray[i][j] == this.turnChar) {
+            for (int j = 0; j < this.boardSize; j++) {
+                if (i + j == this.boardSize - 1) {
+                    if (board[i][j] == this.turnChar) {
                         result4++;
                         if (result4 == this.pattern) {
-                            this.newLevel = false;
+                            this.doNextMove = false;
                             result();
                             break;
                         }
@@ -357,16 +358,16 @@ public class TicTacToe {
                 }
             }
 
-            if (!this.newLevel) {
+            if (!this.doNextMove) {
                 break;
             }
 
-            for (int j = 0; j < this.ticSize; j++) {
+            for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == i1 + i2) {
-                    if (ticArray[i][j] == this.turnChar) {
+                    if (board[i][j] == this.turnChar) {
                         result5++;
                         if (result5 == this.pattern) {
-                            this.newLevel = false;
+                            this.doNextMove = false;
                             result();
                             break;
                         }
@@ -376,16 +377,16 @@ public class TicTacToe {
                 }
             }
 
-            if (!this.newLevel) {
+            if (!this.doNextMove) {
                 break;
             }
 
-            for (int j = 0; j < this.ticSize; j++) {
+            for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
-                    if (ticArray[i][j] == this.turnChar) {
+                    if (board[i][j] == this.turnChar) {
                         result6++;
                         if (result6 == this.pattern) {
-                            this.newLevel = false;
+                            this.doNextMove = false;
                             result();
                             break;
                         }
@@ -394,7 +395,7 @@ public class TicTacToe {
                     }
                 }
             }
-            if (!this.newLevel) {
+            if (!this.doNextMove) {
                 break;
             }
         }
@@ -416,7 +417,7 @@ public class TicTacToe {
      * @throws IOException
      */
     public void jsonWrite() throws IOException {
-        JSON games = new JSON(this.ticSize, this.ticArray, this.userChar, this.userColor, this.input1, this.input2);
+        JSON games = new JSON(this.boardSize, this.board, this.playerChar, this.playerColor, this.input1, this.input2);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String out = gson.toJson(games);
@@ -432,9 +433,9 @@ public class TicTacToe {
         init();
         validateStructure();
         int move = 0;
-        while (this.newLevel) {
+        while (this.doNextMove) {
             renderStructure();
-            userInput();
+            askInput();
 
             if (!importJson) {
                 input1.add(scan.nextInt() - 1);
