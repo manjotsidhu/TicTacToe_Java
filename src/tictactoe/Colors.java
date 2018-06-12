@@ -1,15 +1,17 @@
-/*
- * ANSI Escape Color Codes
- * (Doesn't works on windows cmd)
+/**
+ * Copyright (C) 2018, Manjot Sidhu <manjot.techie@gmail.com>
  */
 package tictactoe;
 
 /**
+ *  ANSI Escape Color Codes
+ * (Doesn't works on windows cmd)
+ * 
  * @author ManjotSidhu
  */
 public class Colors {
 
-    // for Text Codes
+    // for Text Colors
     public static final String RESET = "\u001B[0m";
     public static final String BLACK = "\u001B[30m";
     public static final String RED = "\u001B[31m";

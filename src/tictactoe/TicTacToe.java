@@ -3,15 +3,17 @@
  */
 package tictactoe;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import org.apache.commons.io.FileUtils;
 import static tictactoe.Colors.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * TicTacToe Object is the main and the only component in the functionality of
@@ -22,92 +24,150 @@ import static tictactoe.Colors.*;
  */
 public class TicTacToe {
 
-    /**
-     * empty
-     */
-    public TicTacToe() {
-        // empty
-    }
-
-    // Parameters
-    
-    // board predefined
-    /* private int[][] board = {{1,2,1,1,1,2},
-                                {7,1,9,1,1,2},
-                                {1,8,9,1,1,2},
-                                {7,8,9,1,1,2},
-                                {7,8,9,1,1,2},
-                                {7,8,9,1,1,2}}; */
-    private char[][] board;
+    // Board Array and board size    
+    private String[][] board;
     private int boardSize;
 
-    private char[] playerChar;
+    private String[] playerChar;
     private String[] playerColor;
 
-    private char turnChar;
+    // in-game params
+    private String turnChar;
     private String turnColor;
     private int head;
     private boolean doNextMove = true;
     private final int pattern = 3;
     private boolean restart = true;
-    private boolean importJson = true;
-    private boolean exportJson = true;
+    private boolean doJsonImport = true;
+    private boolean doJsonExport = true;
 
+    // moves data
     ArrayList<Integer> input1 = new ArrayList<>();
     ArrayList<Integer> input2 = new ArrayList<>();
-
+    
+    // json.simple objects
+    JSONObject PlayingData;
+    JSONArray moves;
+    JSONObject MainJSON;
+        
     // Scanner
     Scanner scan = new Scanner(System.in);
-
+    
     /**
-     * Get player's input to import/export JSON files
+     * Get player's input to import JSON file
      */
-    public void jsonInit() {
+    public void askJsonImport() {
         System.out.print(GREEN + "Do you want to load game params from Json:[Y/n] " + RESET);
         char in = scan.next(".").charAt(0);
         switch (in) {
             case 'Y':
-                this.importJson = true;
+                this.doJsonImport = true;
                 break;
             case 'n':
-                this.importJson = false;
+                this.doJsonImport = false;
                 break;
             default:
                 System.out.println(RED + "Enter correct response" + RESET);
-                jsonInit();
+                askJsonImport();
                 break;
         }
-
+    }
+    
+    /**
+     * Get player's input to export JSON file
+     */
+    public void askJsonExport() {
         System.out.print(GREEN + "Do you want to export game params to Json:[Y/n] " + RESET);
         char out = scan.next(".").charAt(0);
-        if (out == 'Y') {
-            this.exportJson = true;
-        } else if (out == 'n') {
-            this.exportJson = false;
-        } else {
-            System.out.println(RED + "Enter correct response dumb" + RESET);
-            jsonInit();
+        switch (out) {
+            case 'Y':
+                this.doJsonExport = true;
+                break;
+            case 'n':
+                this.doJsonExport = false;
+                break;
+            default:
+                System.out.println(RED + "Enter correct response dumb" + RESET);
+                askJsonExport();
+                break;
         }
+    }
+
+    /**
+     * initialize necessary JSON stuff
+     */
+    public void jsonInit() {
+
+        PlayingData = new JSONObject();
+        moves = new JSONArray();
+        MainJSON = new JSONObject();
+        
+        JSONObject Board = new JSONObject();
+        Board.put("Size X", this.boardSize);
+        Board.put("Size Y", this.boardSize);
+        
+        JSONObject Players = new JSONObject();
+        Players.put("Count", this.playerChar.length);
+        
+        JSONArray PlayersData = new JSONArray();
+        for(int i = 0; i < this.playerChar.length; i++) {
+            JSONObject n = new JSONObject();
+            n.put("color", this.playerColor[i]);
+            n.put("character", this.playerChar[i]);
+            PlayersData.add(n);
+        }
+        
+        Players.put("PlayersData", PlayersData);
+        MainJSON.put("Board", Board);
+        MainJSON.put("Players", Players);
     }
 
     /**
      * Reads the <b>input.json</b> file, parses it to a String and sets variables
      * to their superclass variables
      *
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException if <b>input.json</b> file is not found 
+     * @throws IOException if any I/O error occurs
+     * @throws org.json.simple.parser.ParseException if json.simple fails to parse to JSONObjects and JSONArrays
      */
-    public void jsonRead() throws FileNotFoundException, IOException {
-        String str = FileUtils.readFileToString(new File("input.json"));
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public void jsonRead() throws FileNotFoundException, IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader("input.json"));
+        
+        JSONObject myjson = (JSONObject) obj; 
+        JSONObject board = (JSONObject) myjson.get("Board");
 
-        JSON size = gson.fromJson(str, JSON.class);
-        this.boardSize = size.getSize();
-        //this.board = size.getTicTacToe();
-        this.playerChar = size.getcharacters();
-        this.playerColor = size.getColors();
-        this.input1 = size.getMovesX();
-        this.input2 = size.getMovesY();
+        JSONObject PlayingData = (JSONObject) myjson.get("PlayingData");
+        JSONArray movess = (JSONArray) PlayingData.get("Moves");
+        
+        ArrayList<Integer> input1 = new ArrayList<>();
+        ArrayList<Integer> input2 = new ArrayList<>();
+        
+        for(int i = 0; i < movess.size(); i++) {
+            JSONObject insideMove = (JSONObject) movess.get(i);
+            input1.add(Math.toIntExact((Long)insideMove.get("row")));
+            input2.add(Math.toIntExact((Long)insideMove.get("column")));
+        }
+        
+        JSONObject players = (JSONObject) myjson.get("Players");
+        int count = Integer.parseInt(players.get("Count").toString());
+        
+        JSONArray data = (JSONArray) players.get("PlayersData");
+        
+        String[] playerChar = new String[count];
+        String[] playerColor =  new String[count];
+        
+        for(int j = 0; j < count; j++) {
+            JSONObject insideData = (JSONObject) data.get(j);
+            playerChar[j] = (String)insideData.get("character");
+            playerColor[j] = (String)insideData.get("color");
+        }
+        
+        this.boardSize = Integer.parseInt(board.get("Size X").toString());
+        this.input1 = input1;
+        this.input2 = input2;
+        this.playerChar = playerChar;
+        this.playerColor = playerColor;
     }
 
     /**
@@ -120,7 +180,7 @@ public class TicTacToe {
         // boardSize predefined
         // this.boardSize = 6;
 
-        board = new char[boardSize][boardSize];
+        board = new String[boardSize][boardSize];
     }
 
     /**
@@ -129,7 +189,7 @@ public class TicTacToe {
     public void setUsers() {
         System.out.print(GREEN + "Number of players: " + RESET);
         int players = scan.nextInt();
-        playerChar = new char[players];
+        playerChar = new String[players];
         playerColor = new String[players];
 
         this.head = 0;
@@ -142,7 +202,7 @@ public class TicTacToe {
         for (int i = 0; i < playerChar.length; i++) {
             int n = i + 1;
             System.out.print(GREEN + "Player " + n + ", enter your character: " + RESET);
-            this.playerChar[i] = scan.next(".").charAt(0);
+            this.playerChar[i] = scan.next();
 
             System.out.print(GREEN + "Player " + n + ", enter your color: " + RESET);
             this.playerColor[i] = scan.next();
@@ -187,14 +247,16 @@ public class TicTacToe {
     /**
      * Runs all the methods used to fetch all the needed params
      *
-     * @throws IOException
+     * @throws IOException 
+     * @throws java.io.FileNotFoundException 
+     * @throws org.json.simple.parser.ParseException 
      */
     // Init in-game parameters
-    public void init() throws IOException {
-        jsonInit();
-        if (importJson) {
+    public void init() throws IOException, FileNotFoundException, ParseException {
+        askJsonImport();
+        if (this.doJsonImport) {
             jsonRead();
-            this.board = new char[boardSize][boardSize];
+            this.board = new String[boardSize][boardSize];
         } else {
             setSize();
             setUsers();
@@ -205,6 +267,7 @@ public class TicTacToe {
         // Game starts with first player
         this.turnChar = playerChar[0];
         this.turnColor = playerColor[0];
+        jsonInit();
     }
 
     /**
@@ -227,7 +290,7 @@ public class TicTacToe {
 
         for (int i = 0; i < this.boardSize; i++) {
             for (int j = 0; j < this.boardSize; j++) {
-                if (board[i][j] == 0) {
+                if (board[i][j] == null) {
                     System.out.print(GREEN_BG + BLACK + "| " + "  ");
                 } else {
                     System.out.print(GREEN_BG + BLACK + "| " + board[i][j] + " ");
@@ -251,11 +314,13 @@ public class TicTacToe {
         if (i > boardSize - 1 || j > boardSize - 1) {
             System.out.println(RED + "Please input valid index number" + RESET);
             this.restart = false;
-        } // foreground fix :( to not start indexes from 0  
+        } 
+        // foreground fix :( to not start indexes from 0  
         /*else if(i == 0 && j == 0) {
             System.out.println(RED + "Invalid index, indexes starts from 1(inclusive)" + RESET);
             this.restart = false;
-        }*/ else if (board[i][j] != 0) {
+        }*/ 
+        else if (board[i][j] != null) {
             // foreground fix :( to not start indexes from 0
             int fix1 = i + 1;
             int fix2 = i + 1;
@@ -400,6 +465,25 @@ public class TicTacToe {
             }
         }
     }
+    
+    /**
+     * Initializes Json objects and updates params on every input
+     * 
+     * @param x Integer index at X<sup>th</sup> position
+     * @param y Integer index at Y<sup>th</sup> position
+     */
+    public void jsonUpdate(int x, int y) {
+        x++; y++;
+        // foreground fix :( to not start indexes from 0 by adding +1 ^
+
+        JSONObject m = new JSONObject();
+        m.put("row", x);
+        m.put("column", y);
+        moves.add(m);
+        
+        PlayingData.put("Moves", moves);
+        MainJSON.put("PlayingData", PlayingData);
+    }
 
     /**
      * Prints the congratulations message on win
@@ -408,6 +492,7 @@ public class TicTacToe {
         renderStructure();
         System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
         System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
+        askJsonExport();
     }
 
     /**
@@ -417,19 +502,20 @@ public class TicTacToe {
      * @throws IOException
      */
     public void jsonWrite() throws IOException {
-        JSON games = new JSON(this.boardSize, this.board, this.playerChar, this.playerColor, this.input1, this.input2);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        FileWriter file = new FileWriter("output.json");
 
-        String out = gson.toJson(games);
-        FileUtils.writeStringToFile(new File("output.json"), out);
+        file.write(MainJSON.toJSONString());
+        file.flush();
     }
 
     /**
      * Iterates every move till winning
      *
      * @throws IOException
+     * @throws java.io.FileNotFoundException
+     * @throws org.json.simple.parser.ParseException
      */
-    public void start() throws IOException {
+    public void start() throws IOException, FileNotFoundException, ParseException {
         init();
         validateStructure();
         int move = 0;
@@ -437,34 +523,41 @@ public class TicTacToe {
             renderStructure();
             askInput();
 
-            if (!importJson) {
-                input1.add(scan.nextInt() - 1);
-                input2.add(scan.nextInt() - 1);
+            if (!this.doJsonImport) {
+                input1.add(scan.nextInt());
+                input2.add(scan.nextInt());
             }
-
+            
+            int x = input1.get(move) - 1;
+            int y = input2.get(move) - 1;
             // foreground fix :( to not start indexes from 0 by adding -1 ^
-            validateInput(input1.get(move), input2.get(move));
+            
+            validateInput(x, y);
             if (!restart) {
                 move++;
                 continue;
             }
-            setValue(input1.get(move), input2.get(move));
-            logic(input1.get(move), input2.get(move));
+            jsonUpdate(x, y);
+            setValue(x, y);
+            logic(x, y);
 
             nextTurn();
             move++;
         }
-        if (exportJson) {
+        if(this.doJsonExport) {
             jsonWrite();
         }
+
     }
 
     /**
      * Creates TicTacToe's object and runs <b>start</b> method
      *
      * @throws IOException
+     * @throws java.io.FileNotFoundException
+     * @throws org.json.simple.parser.ParseException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, ParseException {
         TicTacToe game = new TicTacToe();
         game.start();
     }

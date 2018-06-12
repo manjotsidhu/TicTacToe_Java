@@ -1,0 +1,26 @@
+{
+	"Project": "TicTacToe",
+	
+	"Project Source Files": [
+		{"src":[
+		    {"tictactoe":[
+		      {"Main Class":"TicTacToe.java"},
+		      {"ANSI Colors Class":"Colors.java"}
+		      ]
+		    }
+		  ] 
+		}
+	],
+	
+	"External Java Libraries Used": [
+	    "org.json.simple",
+  ],
+	
+	"features": [
+		{"title": "undo redo of wrong or right moves till all moves", "isCovered": "false" },
+		{"title": "save/load game with settings", "isCovered": "false" },
+		{"title": "cover all types of validations", "isCovered": "false" },
+		{"title": "display menu of commands", "isCovered": "false" },
+		{"title": "", "isCovered": "false" }
+	]
+}
