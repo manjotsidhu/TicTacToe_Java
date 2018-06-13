@@ -28,6 +28,9 @@ public class TicTacToe {
     private String[][] board;
     private int boardSize;
 
+    // Events Array
+    ArrayList events = new ArrayList();
+
     private String[] playerChar;
     private String[] playerColor;
 
@@ -37,22 +40,22 @@ public class TicTacToe {
     private int head;
     private boolean doNextMove = true;
     private final int pattern = 3;
-    private boolean restart = true;
+    private boolean restart = false;
     private boolean doJsonImport = true;
-    private boolean doJsonExport = true;
+    private boolean doJsonExport = false;
 
-    // moves data
+    // Moves data
     ArrayList<Integer> input1 = new ArrayList<>();
     ArrayList<Integer> input2 = new ArrayList<>();
-    
+
     // json.simple objects
     JSONObject PlayingData;
     JSONArray moves;
     JSONObject MainJSON;
-        
+
     // Scanner
     Scanner scan = new Scanner(System.in);
-    
+
     /**
      * Get player's input to import JSON file
      */
@@ -72,7 +75,7 @@ public class TicTacToe {
                 break;
         }
     }
-    
+
     /**
      * Get player's input to export JSON file
      */
@@ -101,68 +104,69 @@ public class TicTacToe {
         PlayingData = new JSONObject();
         moves = new JSONArray();
         MainJSON = new JSONObject();
-        
+
         JSONObject Board = new JSONObject();
         Board.put("Size X", this.boardSize);
         Board.put("Size Y", this.boardSize);
-        
+
         JSONObject Players = new JSONObject();
         Players.put("Count", this.playerChar.length);
-        
+
         JSONArray PlayersData = new JSONArray();
-        for(int i = 0; i < this.playerChar.length; i++) {
+        for (int i = 0; i < this.playerChar.length; i++) {
             JSONObject n = new JSONObject();
             n.put("color", this.playerColor[i]);
             n.put("character", this.playerChar[i]);
             PlayersData.add(n);
         }
-        
+
         Players.put("PlayersData", PlayersData);
         MainJSON.put("Board", Board);
         MainJSON.put("Players", Players);
     }
 
     /**
-     * Reads the <b>input.json</b> file, parses it to a String and sets variables
-     * to their superclass variables
+     * Reads the <b>input.json</b> file, parses it to a String and sets
+     * variables to their superclass variables
      *
-     * @throws FileNotFoundException if <b>input.json</b> file is not found 
+     * @throws FileNotFoundException if <b>input.json</b> file is not found
      * @throws IOException if any I/O error occurs
-     * @throws org.json.simple.parser.ParseException if json.simple fails to parse to JSONObjects and JSONArrays
+     * @throws org.json.simple.parser.ParseException if json.simple fails to
+     * parse to JSONObjects and JSONArrays
      */
     public void jsonRead() throws FileNotFoundException, IOException, ParseException {
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(new FileReader("input.json"));
-        
-        JSONObject myjson = (JSONObject) obj; 
+
+        JSONObject myjson = (JSONObject) obj;
         JSONObject board = (JSONObject) myjson.get("Board");
 
         JSONObject PlayingData = (JSONObject) myjson.get("PlayingData");
         JSONArray movess = (JSONArray) PlayingData.get("Moves");
-        
+
         ArrayList<Integer> input1 = new ArrayList<>();
         ArrayList<Integer> input2 = new ArrayList<>();
-        
-        for(int i = 0; i < movess.size(); i++) {
+
+        for (int i = 0; i < movess.size(); i++) {
             JSONObject insideMove = (JSONObject) movess.get(i);
-            input1.add(Math.toIntExact((Long)insideMove.get("row")));
-            input2.add(Math.toIntExact((Long)insideMove.get("column")));
+            input1.add(Math.toIntExact((Long) insideMove.get("row")));
+            input2.add(Math.toIntExact((Long) insideMove.get("column")));
         }
-        
+
         JSONObject players = (JSONObject) myjson.get("Players");
         int count = Integer.parseInt(players.get("Count").toString());
-        
+
         JSONArray data = (JSONArray) players.get("PlayersData");
-        
+
         String[] playerChar = new String[count];
-        String[] playerColor =  new String[count];
-        
-        for(int j = 0; j < count; j++) {
+        String[] playerColor = new String[count];
+
+        for (int j = 0; j < count; j++) {
             JSONObject insideData = (JSONObject) data.get(j);
-            playerChar[j] = (String)insideData.get("character");
-            playerColor[j] = (String)insideData.get("color");
+            playerChar[j] = (String) insideData.get("character");
+            playerColor[j] = (String) insideData.get("color");
         }
-        
+
         this.boardSize = Integer.parseInt(board.get("Size X").toString());
         this.input1 = input1;
         this.input2 = input2;
@@ -247,9 +251,9 @@ public class TicTacToe {
     /**
      * Runs all the methods used to fetch all the needed params
      *
-     * @throws IOException 
-     * @throws java.io.FileNotFoundException 
-     * @throws org.json.simple.parser.ParseException 
+     * @throws IOException
+     * @throws java.io.FileNotFoundException
+     * @throws org.json.simple.parser.ParseException
      */
     // Init in-game parameters
     public void init() throws IOException, FileNotFoundException, ParseException {
@@ -313,22 +317,68 @@ public class TicTacToe {
     public void validateInput(int i, int j) {
         if (i > boardSize - 1 || j > boardSize - 1) {
             System.out.println(RED + "Please input valid index number" + RESET);
-            this.restart = false;
-        } 
-        // foreground fix :( to not start indexes from 0  
+            this.restart = true;
+        } // foreground fix :( to not start indexes from 0  
         /*else if(i == 0 && j == 0) {
             System.out.println(RED + "Invalid index, indexes starts from 1(inclusive)" + RESET);
-            this.restart = false;
-        }*/ 
-        else if (board[i][j] != null) {
+            this.restart = true;
+        }*/ else if (board[i][j] != null) {
             // foreground fix :( to not start indexes from 0
             int fix1 = i + 1;
             int fix2 = i + 1;
             System.out.println(RED + fix1 + " " + fix2 + " index already has " + board[i][j] + " value." + RESET);
-            this.restart = false;
-        } else {
             this.restart = true;
+        } else {
+            this.restart = false;
         }
+    }
+
+    /**
+     * Adds values after the Last Element of Events Array
+     *
+     * @param x X<sup>th</sup> index of Board (Starting from 0)
+     * @param y Y<sup>th</sup> index of Board (Starting from 0)
+     * @param z Player Character
+     * @param q Event type, 0 - General Value, 1 - Value from Undo, 2 - Value
+     * from Redo
+     */
+    public void newEvent(int x, int y, String z, int q) {
+        events.add(new ArrayList());
+        ((ArrayList) events.get(events.size() - 1)).add(x);
+        ((ArrayList) events.get(events.size() - 1)).add(y);
+        ((ArrayList) events.get(events.size() - 1)).add(z);
+        ((ArrayList) events.get(events.size() - 1)).add(q);
+    }
+
+    /**
+     * Undo last move by removing last element from the <b>Board</b> and <b>Moves</b>
+     * Array and adding a new event in events array
+     */
+    public void doUndo() {
+        newEvent((Integer)((ArrayList) events.get(events.size() - 1)).get(0),(Integer) ((ArrayList) events.get(events.size() - 1)).get(1),(String)((ArrayList) events.get(events.size() - 1)).get(2), 1);
+        this.board[this.input1.get(this.input1.size()-1)-1][this.input2.get(this.input2.size()-1)-1] = null;
+        // foreground fix :( to not start indexes from 0 by adding -1 ^
+        this.input1.remove(this.input1.size()-1);
+        this.input2.remove(this.input2.size()-1);
+        
+        this.restart = true;
+    }
+    
+    /**
+     * Redo last move by getting last value from events and putting to <b>Board</>
+     * and <b>Moves</b> array
+     */
+    public void doRedo() {
+        int x = (Integer) ((ArrayList) events.get(this.events.size()-1)).get(0);
+        int y = (Integer) ((ArrayList) events.get(this.events.size()-1)).get(1);
+        String turnChar = (String) ((ArrayList) events.get(this.events.size()-1)).get(2);
+        this.board[x][y] = turnChar;
+        input1.add(x+1);
+        input2.add(y+1);
+        // foreground fix :( to not start indexes from 0 by adding +1 ^
+        
+        newEvent(x, y, turnChar, 2);
+        this.restart = true;
     }
 
     /**
@@ -465,22 +515,23 @@ public class TicTacToe {
             }
         }
     }
-    
+
     /**
      * Initializes Json objects and updates params on every input
-     * 
+     *
      * @param x Integer index at X<sup>th</sup> position
      * @param y Integer index at Y<sup>th</sup> position
      */
     public void jsonUpdate(int x, int y) {
-        x++; y++;
+        x++;
+        y++;
         // foreground fix :( to not start indexes from 0 by adding +1 ^
 
         JSONObject m = new JSONObject();
         m.put("row", x);
         m.put("column", y);
         moves.add(m);
-        
+
         PlayingData.put("Moves", moves);
         MainJSON.put("PlayingData", PlayingData);
     }
@@ -492,7 +543,9 @@ public class TicTacToe {
         renderStructure();
         System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
         System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
-        askJsonExport();
+        if(!this.doJsonImport) {
+            askJsonExport();
+        }
     }
 
     /**
@@ -524,30 +577,47 @@ public class TicTacToe {
             askInput();
 
             if (!this.doJsonImport) {
-                input1.add(scan.nextInt());
-                input2.add(scan.nextInt());
+                if(!scan.hasNextInt()) {
+                    String t = scan.next();
+                    if(t.equals("undo")) {
+                        doUndo();
+                        move--;
+                        if (restart) {
+                            continue;
+                        }
+                    } else if(t.equals("redo")) {
+                        doRedo();
+                        move++;
+                        if(restart) {
+                            continue;
+                        }
+                    }
+                }
+                    input1.add(scan.nextInt());
+                    input2.add(scan.nextInt());
             }
-            
+
             int x = input1.get(move) - 1;
             int y = input2.get(move) - 1;
             // foreground fix :( to not start indexes from 0 by adding -1 ^
-            
+
             validateInput(x, y);
-            if (!restart) {
+            if (restart) {
                 move++;
                 continue;
             }
             jsonUpdate(x, y);
+            newEvent(x, y, this.turnChar, 0);
             setValue(x, y);
             logic(x, y);
 
             nextTurn();
             move++;
         }
-        if(this.doJsonExport) {
+        if (this.doJsonExport) {
             jsonWrite();
         }
-
+        
     }
 
     /**
