@@ -72,7 +72,6 @@ public class TicTacToe {
             default:
                 System.out.println(RED + "Enter correct response" + RESET);
                 askJsonImport();
-                break;
         }
     }
 
@@ -90,12 +89,12 @@ public class TicTacToe {
                 this.doJsonExport = false;
                 break;
             default:
-                System.out.println(RED + "Enter correct response dumb" + RESET);
+                System.out.println(RED + "Enter correct response" + RESET);
                 askJsonExport();
                 break;
         }
     }
-
+    
     /**
      * initialize necessary JSON stuff
      */
@@ -126,7 +125,7 @@ public class TicTacToe {
     }
 
     /**
-     * Reads the <b>input.json</b> file, parses it to a String and sets
+     * Reads Json input file, parses it to a String and sets
      * variables to their superclass variables
      *
      * @throws FileNotFoundException if <b>input.json</b> file is not found
@@ -136,7 +135,8 @@ public class TicTacToe {
      */
     public void jsonRead() throws FileNotFoundException, IOException, ParseException {
         JSONParser parser = new JSONParser();
-        Object obj = parser.parse(new FileReader("input.json"));
+        System.out.println(GREEN + "Enter File Location: " + RESET);
+        Object obj = parser.parse(new FileReader(scan.next()));
 
         JSONObject myjson = (JSONObject) obj;
         JSONObject board = (JSONObject) myjson.get("Board");
@@ -193,10 +193,27 @@ public class TicTacToe {
     public void setUsers() {
         System.out.print(GREEN + "Number of players: " + RESET);
         int players = scan.nextInt();
+        validateUsers(players);
         playerChar = new String[players];
         playerColor = new String[players];
 
         this.head = 0;
+    }
+    
+    /**
+     * Validate number of players inputted by player
+     * 
+     * @param i number of players from Scanner
+     */
+    public void validateUsers(int i) {
+        // TODO: fix temp value to dynamic
+        int temp = 6;
+        if(i < 1 || i > temp) {
+            System.out.println(RED + "Number of players should not be less than 1"
+                + " and more than " + temp + RESET);
+            System.out.println(RED + "Please try again" + RESET);
+            setUsers();
+        }
     }
 
     /**
@@ -206,7 +223,7 @@ public class TicTacToe {
         for (int i = 0; i < playerChar.length; i++) {
             int n = i + 1;
             System.out.print(GREEN + "Player " + n + ", enter your character: " + RESET);
-            this.playerChar[i] = scan.next();
+            this.playerChar[i] = scan.next().substring(0, 1);
 
             System.out.print(GREEN + "Player " + n + ", enter your color: " + RESET);
             this.playerColor[i] = scan.next();
@@ -243,6 +260,12 @@ public class TicTacToe {
                     break;
                 case "WHITE":
                     playerColor[i] = WHITE;
+                    break;
+                default:
+                    playerColor[i] = PURPLE;
+                    int player = i+1; 
+                    System.out.println(YELLOW + "Invalid color given by Player " + player + RESET);
+                    System.out.println(YELLOW + "Setting color to PURPLE" + RESET);
                     break;
             }
         }
@@ -362,6 +385,7 @@ public class TicTacToe {
         this.input2.remove(this.input2.size()-1);
         
         this.restart = true;
+        prevTurn();
     }
     
     /**
@@ -379,6 +403,7 @@ public class TicTacToe {
         
         newEvent(x, y, turnChar, 2);
         this.restart = true;
+        nextTurn();
     }
 
     /**
@@ -408,6 +433,21 @@ public class TicTacToe {
             head = 0;
         } else {
             head++;
+        }
+        this.turnChar = playerChar[head];
+        this.turnColor = playerColor[head];
+    }
+    
+    /**
+     * Updates <b>current</b> character and color to previous player's turn
+     * accordingly
+     */
+    public void prevTurn() {
+
+        if (head == 0) {
+            head = playerChar.length - 1;
+        } else {
+            head--;
         }
         this.turnChar = playerChar[head];
         this.turnColor = playerColor[head];
@@ -550,12 +590,17 @@ public class TicTacToe {
 
     /**
      * Pushes the variables to JSON object and return JSON format in a String
-     * and Write to <b>output.json</b>
+     * and Write to Json File
      *
      * @throws IOException
      */
     public void jsonWrite() throws IOException {
-        FileWriter file = new FileWriter("output.json");
+        System.out.println(GREEN + "Enter File Name" + RESET);
+        String filename = scan.next();
+        if(!filename.contains("json")) {
+            filename += ".json";
+        }
+        FileWriter file = new FileWriter(filename);
 
         file.write(MainJSON.toJSONString());
         file.flush();
@@ -575,7 +620,7 @@ public class TicTacToe {
         while (this.doNextMove) {
             renderStructure();
             askInput();
-
+            
             if (!this.doJsonImport) {
                 if(!scan.hasNextInt()) {
                     String t = scan.next();
@@ -591,16 +636,21 @@ public class TicTacToe {
                         if(restart) {
                             continue;
                         }
+                    } else if(t.equals("save")) {
+                        jsonWrite();
+                        this.doNextMove = false;
+                        continue;
                     }
                 }
-                    input1.add(scan.nextInt());
-                    input2.add(scan.nextInt());
+                
+                input1.add(scan.nextInt());
+                input2.add(scan.nextInt());
             }
 
             int x = input1.get(move) - 1;
             int y = input2.get(move) - 1;
             // foreground fix :( to not start indexes from 0 by adding -1 ^
-
+            
             validateInput(x, y);
             if (restart) {
                 move++;
@@ -610,9 +660,14 @@ public class TicTacToe {
             newEvent(x, y, this.turnChar, 0);
             setValue(x, y);
             logic(x, y);
-
+            
             nextTurn();
             move++;
+            if(this.doJsonImport) {
+                if(move == input1.size()) {
+                    this.doJsonImport = false;
+                }
+            }
         }
         if (this.doJsonExport) {
             jsonWrite();
