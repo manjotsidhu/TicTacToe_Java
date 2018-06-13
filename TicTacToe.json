@@ -17,10 +17,10 @@
   ],
 	
 	"features": [
-		{"title": "undo redo of wrong or right moves till all moves", "isCovered": "false" },
-		{"title": "save/load game with settings", "isCovered": "false" },
-		{"title": "cover all types of validations", "isCovered": "false" },
+		{"title": "undo redo of wrong or right moves till all moves", "isCovered": "true" },
+		{"title": "save/load game with settings", "isCovered": "true" },
+		{"title": "cover all types of validations", "isCovered": "true" },
 		{"title": "display menu of commands", "isCovered": "false" },
-		{"title": "", "isCovered": "false" }
+		{"title": "TEMPLATE", "isCovered": "false/true" }
 	]
 }
