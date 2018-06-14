@@ -1,3 +1,10 @@
 *.class
 build/
 /dist/
+.gradle
+ext
+gradle/
+nbproject
+input.json
+output.json
+to_predefined.patch
