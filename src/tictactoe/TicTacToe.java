@@ -138,40 +138,40 @@ public class TicTacToe {
         System.out.println(GREEN + "Enter File Location: " + RESET);
         Object obj = parser.parse(new FileReader(scan.next()));
 
-        JSONObject myjson = (JSONObject) obj;
-        JSONObject board = (JSONObject) myjson.get("Board");
+        JSONObject myJson = (JSONObject) obj;
+        JSONObject boardJson = (JSONObject) myJson.get("Board");
 
-        JSONObject PlayingData = (JSONObject) myjson.get("PlayingData");
-        JSONArray movess = (JSONArray) PlayingData.get("Moves");
+        JSONObject PlayingDataJson = (JSONObject) myJson.get("PlayingData");
+        JSONArray movess = (JSONArray) PlayingDataJson.get("Moves");
 
-        ArrayList<Integer> input1 = new ArrayList<>();
-        ArrayList<Integer> input2 = new ArrayList<>();
+        ArrayList<Integer> input1Json = new ArrayList<>();
+        ArrayList<Integer> input2Json = new ArrayList<>();
 
         for (int i = 0; i < movess.size(); i++) {
-            JSONObject insideMove = (JSONObject) movess.get(i);
-            input1.add(Math.toIntExact((Long) insideMove.get("row")));
-            input2.add(Math.toIntExact((Long) insideMove.get("column")));
+            JSONObject temp = (JSONObject) movess.get(i);
+            input1Json.add(Math.toIntExact((Long) temp.get("row")));
+            input2Json.add(Math.toIntExact((Long) temp.get("column")));
         }
 
-        JSONObject players = (JSONObject) myjson.get("Players");
+        JSONObject players = (JSONObject) myJson.get("Players");
         int count = Integer.parseInt(players.get("Count").toString());
 
         JSONArray data = (JSONArray) players.get("PlayersData");
 
-        String[] playerChar = new String[count];
-        String[] playerColor = new String[count];
+        String[] playerCharJson = new String[count];
+        String[] playerColorJson = new String[count];
 
         for (int j = 0; j < count; j++) {
             JSONObject insideData = (JSONObject) data.get(j);
-            playerChar[j] = (String) insideData.get("character");
-            playerColor[j] = (String) insideData.get("color");
+            playerCharJson[j] = (String) insideData.get("character");
+            playerColorJson[j] = (String) insideData.get("color");
         }
 
-        this.boardSize = Integer.parseInt(board.get("Size X").toString());
-        this.input1 = input1;
-        this.input2 = input2;
-        this.playerChar = playerChar;
-        this.playerColor = playerColor;
+        this.boardSize = Integer.parseInt(boardJson.get("Size X").toString());
+        this.input1 = input1Json;
+        this.input2 = input2Json;
+        this.playerChar = playerCharJson;
+        this.playerColor = playerColorJson;
     }
 
     /**
@@ -181,8 +181,6 @@ public class TicTacToe {
         System.out.print(GREEN + "Enter Size/Order: " + RESET);
 
         this.boardSize = scan.nextInt();
-        // boardSize predefined
-        // this.boardSize = 6;
 
         board = new String[boardSize][boardSize];
     }
@@ -389,19 +387,19 @@ public class TicTacToe {
     }
     
     /**
-     * Redo last move by getting last value from events and putting to <b>Board</>
+     * Redo last move by getting last value from events and putting to <b>Board</b>
      * and <b>Moves</b> array
      */
     public void doRedo() {
         int x = (Integer) ((ArrayList) events.get(this.events.size()-1)).get(0);
         int y = (Integer) ((ArrayList) events.get(this.events.size()-1)).get(1);
-        String turnChar = (String) ((ArrayList) events.get(this.events.size()-1)).get(2);
-        this.board[x][y] = turnChar;
+        String getChar = (String) ((ArrayList) events.get(this.events.size()-1)).get(2);
+        this.board[x][y] = getChar;
         input1.add(x+1);
         input2.add(y+1);
         // foreground fix :( to not start indexes from 0 by adding +1 ^
         
-        newEvent(x, y, turnChar, 2);
+        newEvent(x, y, getChar, 2);
         this.restart = true;
         nextTurn();
     }
@@ -465,7 +463,7 @@ public class TicTacToe {
                 result6 = 0;
 
         for (int i = 0; i < this.boardSize; i++) {
-            if (board[i][i2] == this.turnChar) {
+            if (board[i][i2].equals(this.turnChar)) {
                 result1++;
                 if (result1 == this.pattern) {
                     this.doNextMove = false;
@@ -476,7 +474,7 @@ public class TicTacToe {
                 result1 = 0;
             }
 
-            if (board[i1][i] == this.turnChar) {
+            if (board[i1][i].equals(this.turnChar)) {
                 result2++;
                 if (result2 == this.pattern) {
                     this.doNextMove = false;
@@ -487,7 +485,7 @@ public class TicTacToe {
                 result2 = 0;
             }
 
-            if (board[i][i] == this.turnChar) {
+            if (board[i][i].equals(this.turnChar)) {
                 result3++;
                 if (result3 == this.pattern) {
                     this.doNextMove = false;
@@ -500,7 +498,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == this.boardSize - 1) {
-                    if (board[i][j] == this.turnChar) {
+                    if (board[i][j].equals(this.turnChar)) {
                         result4++;
                         if (result4 == this.pattern) {
                             this.doNextMove = false;
@@ -519,7 +517,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == i1 + i2) {
-                    if (board[i][j] == this.turnChar) {
+                    if (board[i][j].equals(this.turnChar)) {
                         result5++;
                         if (result5 == this.pattern) {
                             this.doNextMove = false;
@@ -538,7 +536,7 @@ public class TicTacToe {
 
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
-                    if (board[i][j] == this.turnChar) {
+                    if (board[i][j].equals(this.turnChar)) {
                         result6++;
                         if (result6 == this.pattern) {
                             this.doNextMove = false;
@@ -624,22 +622,25 @@ public class TicTacToe {
             if (!this.doJsonImport) {
                 if(!scan.hasNextInt()) {
                     String t = scan.next();
-                    if(t.equals("undo")) {
-                        doUndo();
-                        move--;
-                        if (restart) {
+                    switch (t) {
+                        case "undo":
+                            doUndo();
+                            move--;
+                            if (restart) {
+                                continue;
+                            }   break;
+                        case "redo":
+                            doRedo();
+                            move++;
+                            if(restart) {
+                                continue;
+                            }   break;
+                        case "save":
+                            jsonWrite();
+                            this.doNextMove = false;
                             continue;
-                        }
-                    } else if(t.equals("redo")) {
-                        doRedo();
-                        move++;
-                        if(restart) {
-                            continue;
-                        }
-                    } else if(t.equals("save")) {
-                        jsonWrite();
-                        this.doNextMove = false;
-                        continue;
+                        default:
+                            break;
                     }
                 }
                 
@@ -678,6 +679,7 @@ public class TicTacToe {
     /**
      * Creates TicTacToe's object and runs <b>start</b> method
      *
+     * @param args not required
      * @throws IOException
      * @throws java.io.FileNotFoundException
      * @throws org.json.simple.parser.ParseException
