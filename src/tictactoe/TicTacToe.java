@@ -16,8 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * TicTacToe Object is the main and the only component in the functionality of
- * this TicTacToe game
+ * The one and only class that comprises the TicTacToe game 
  *
  * @version 0.1
  * @author ManjotSidhu
@@ -52,7 +51,7 @@ public class TicTacToe {
     JSONObject PlayingData;
     JSONArray moves;
     JSONObject MainJSON;
-
+    
     // Scanner
     Scanner scan = new Scanner(System.in);
 
@@ -262,8 +261,8 @@ public class TicTacToe {
                 default:
                     playerColor[i] = PURPLE;
                     int player = i+1; 
-                    System.out.println(YELLOW + "Invalid color given by Player " + player + RESET);
-                    System.out.println(YELLOW + "Setting color to PURPLE" + RESET);
+                    System.out.println(RED + "Invalid color given by Player " + player + RESET);
+                    System.out.println(RED + "Setting color to PURPLE" + RESET);
                     break;
             }
         }
@@ -307,12 +306,12 @@ public class TicTacToe {
     }
 
     /**
-     * Renders/Creates the main game <b>board</b>
+     * Renders/Creates the main game <b>Board</b>
      */
     public void renderStructure() {
         System.out.print(new String(new char[this.boardSize]).replace("\0", GREEN_BG + BLACK + "+---"));
         System.out.println("+" + RESET);
-
+        
         for (int i = 0; i < this.boardSize; i++) {
             for (int j = 0; j < this.boardSize; j++) {
                 if (board[i][j] == null) {
@@ -346,7 +345,7 @@ public class TicTacToe {
         }*/ else if (board[i][j] != null) {
             // foreground fix :( to not start indexes from 0
             int fix1 = i + 1;
-            int fix2 = i + 1;
+            int fix2 = j + 1;
             System.out.println(RED + fix1 + " " + fix2 + " index already has " + board[i][j] + " value." + RESET);
             this.restart = true;
         } else {
@@ -460,10 +459,11 @@ public class TicTacToe {
     public void logic(int i1, int i2) {
         // my bad :(
         int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0,
-                result6 = 0;
+            result6 = 0;
 
         for (int i = 0; i < this.boardSize; i++) {
-            if (board[i][i2].equals(this.turnChar)) {
+            // checks if elements along column are equal
+            if (board[i][i2] == this.turnChar) {
                 result1++;
                 if (result1 == this.pattern) {
                     this.doNextMove = false;
@@ -474,7 +474,8 @@ public class TicTacToe {
                 result1 = 0;
             }
 
-            if (board[i1][i].equals(this.turnChar)) {
+            // checks if elements along row are equal
+            if (board[i1][i] == this.turnChar) {
                 result2++;
                 if (result2 == this.pattern) {
                     this.doNextMove = false;
@@ -485,7 +486,8 @@ public class TicTacToe {
                 result2 = 0;
             }
 
-            if (board[i][i].equals(this.turnChar)) {
+            // checks if elements along primary diagonal are equal
+            if (board[i][i] == this.turnChar) {
                 result3++;
                 if (result3 == this.pattern) {
                     this.doNextMove = false;
@@ -496,9 +498,10 @@ public class TicTacToe {
                 result3 = 0;
             }
 
+            // checks if elements along secondary diagonal are equal
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == this.boardSize - 1) {
-                    if (board[i][j].equals(this.turnChar)) {
+                    if (board[i][j] == this.turnChar) {
                         result4++;
                         if (result4 == this.pattern) {
                             this.doNextMove = false;
@@ -515,9 +518,10 @@ public class TicTacToe {
                 break;
             }
 
+            // checks if elements along the primary diagonal of the index
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == i1 + i2) {
-                    if (board[i][j].equals(this.turnChar)) {
+                    if (board[i][j] == this.turnChar) {
                         result5++;
                         if (result5 == this.pattern) {
                             this.doNextMove = false;
@@ -534,9 +538,10 @@ public class TicTacToe {
                 break;
             }
 
+            // checks if elements along the secondary diagonal of the index
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
-                    if (board[i][j].equals(this.turnChar)) {
+                    if (board[i][j] == this.turnChar) {
                         result6++;
                         if (result6 == this.pattern) {
                             this.doNextMove = false;
