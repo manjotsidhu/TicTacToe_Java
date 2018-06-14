@@ -1,7 +1,8 @@
 *.class
 build/
 /dist/
-.gradle
+.gradle/
+test/
 ext
 gradle/
 nbproject
