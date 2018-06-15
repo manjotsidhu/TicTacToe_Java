@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2018, Manjot Sidhu <manjot.techie@gmail.com>
  */
-package tictactoe;
+package com.org.manjotsidhu.tictactoe;
 
 /**
  *  ANSI Escape Color Codes
