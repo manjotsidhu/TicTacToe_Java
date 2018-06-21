@@ -18,7 +18,6 @@ import org.json.simple.parser.ParseException;
 /**
  * The one and only class that comprises the TicTacToe game 
  *
- * @version 0.1
  * @author ManjotSidhu
  */
 public class TicTacToe {
@@ -54,7 +53,25 @@ public class TicTacToe {
     
     // Scanner
     Scanner scan = new Scanner(System.in);
-
+    
+    // Help
+    help helpMe = new help();
+   
+    /**
+     * Adds help of all the commands player needs to know about it
+     */
+    public void newHelp() {
+        helpMe.addToHelp("Game parameters(shortened as params)", "Usually data of all the players like colors, characters amd moves ");
+        helpMe.addToHelp("Json", "A commonly used format to store game parameters");
+        helpMe.addToHelp("Import game params", "Imports saved game params ONLY in a Json format");
+        helpMe.addToHelp("Export game params", "Export/Save game in a Json format in order to continue/replay your game");
+        helpMe.addToHelp("Size/Order", "The square dimensions of tictactoe board as a number which can be in the range of 3 to 9 inclusive");
+        helpMe.addToHelp("Number Of Players", "Number of players who wants to play this game which should be always less than 1");
+        helpMe.addToHelp("Character of player", "Character to be used as a mark on the board which is always unique of a player");
+        helpMe.addToHelp("Color of player", "Color to be used just for the representation of the player's turn");
+        helpMe.addToHelp("Input Move", "Index of the tictactoe board starting from 1 and syntax \"X Y\" where X is the element of Xth row and Y is the element of Yth element");
+    }
+    
     /**
      * Get player's input to import JSON file
      */
@@ -68,6 +85,11 @@ public class TicTacToe {
             case 'n':
                 this.doJsonImport = false;
                 break;
+            case 'h':
+                helpMe.printString("Game parameters(shortened as params)");
+                helpMe.printString("Json");
+                helpMe.printString("Import game params");
+                askJsonImport();
             default:
                 System.out.println(RED + "Enter correct response" + RESET);
                 askJsonImport();
@@ -87,6 +109,9 @@ public class TicTacToe {
             case 'n':
                 this.doJsonExport = false;
                 break;
+            case 'h':
+                helpMe.printString("Export game params");
+                askJsonExport();
             default:
                 System.out.println(RED + "Enter correct response" + RESET);
                 askJsonExport();
@@ -258,6 +283,8 @@ public class TicTacToe {
                 case "WHITE":
                     playerColor[i] = WHITE;
                     break;
+                case "HELP":
+                    helpMe.printString("Color of player");
                 default:
                     playerColor[i] = PURPLE;
                     int player = i+1; 
@@ -277,6 +304,7 @@ public class TicTacToe {
      */
     // Init in-game parameters
     public void init() throws IOException, FileNotFoundException, ParseException {
+        newHelp();
         askJsonImport();
         if (this.doJsonImport) {
             jsonRead();
@@ -518,7 +546,7 @@ public class TicTacToe {
                 break;
             }
 
-            // checks if elements along the primary diagonal of the index
+            // checks if elements along the primary diagonal of the index are equal
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == i1 + i2) {
                     if (board[i][j] == this.turnChar) {
@@ -538,7 +566,7 @@ public class TicTacToe {
                 break;
             }
 
-            // checks if elements along the secondary diagonal of the index
+            // checks if elements along the secondary diagonal of the index are equal
             for (int j = 0; j < this.boardSize; j++) {
                 if (i + j == Math.abs(i1 - i2)) {
                     if (board[i][j] == this.turnChar) {
@@ -633,16 +661,21 @@ public class TicTacToe {
                             move--;
                             if (restart) {
                                 continue;
-                            }   break;
+                            }   
+                            break;
                         case "redo":
                             doRedo();
                             move++;
                             if(restart) {
                                 continue;
-                            }   break;
+                            }   
+                            break;
                         case "save":
                             jsonWrite();
                             this.doNextMove = false;
+                            continue;
+                        case "help":
+                            helpMe.printString("Input Move");
                             continue;
                         default:
                             break;
