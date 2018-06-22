@@ -58,9 +58,28 @@ public class TicTacToe {
     help helpMe = new help();
    
     /**
+     * Welcome Page of TicTacToe
+     */
+    public void welcome() {
+        System.out.println( GREEN + "+--------------------------------------+" + RESET);
+        System.out.println( GREEN + "|     Welcome to TicTacToe Game,       |" + RESET);
+        System.out.println( GREEN + "| type P to Play or type H to see help |" + RESET);
+        System.out.println( GREEN + "+--------------------------------------+" + RESET);
+        
+        char in = scan.next(".").charAt(0);
+        if(in == 'H') {
+            helpMe.printString("TicTacToe");
+            welcome();
+        } else if(in == 'P') {
+            System.out.println(RED_BG + WHITE + "Lets Play !!!" + RESET);
+        }
+    }
+    
+    /**
      * Adds help of all the commands player needs to know about it
      */
     public void newHelp() {
+        helpMe.addToHelp("TicTacToe", "TicTacToe is a game between 2 players, the player who succeeds in placing three of their marks in a horizontal, vertical, or diagonal row wins the game");
         helpMe.addToHelp("Game parameters(shortened as params)", "Usually data of all the players like colors, characters amd moves ");
         helpMe.addToHelp("Json", "A commonly used format to store game parameters");
         helpMe.addToHelp("Import game params", "Imports saved game params ONLY in a Json format");
@@ -223,7 +242,7 @@ public class TicTacToe {
     }
     
     /**
-     * Validate number of players inputted by player
+     * Validate number of players from by player
      * 
      * @param i number of players from Scanner
      */
@@ -645,6 +664,7 @@ public class TicTacToe {
      * @throws org.json.simple.parser.ParseException
      */
     public void start() throws IOException, FileNotFoundException, ParseException {
+        welcome();
         init();
         validateStructure();
         int move = 0;
