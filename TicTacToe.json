@@ -12,15 +12,19 @@
 		}
 	],
 	
-	"External Java Libraries Used": [
+	"Dependencies": [
 	    "org.json.simple",
-  ],
+		"org.fusesource.jansi",
+	],
 	
 	"features": [
 		{"title": "undo redo of wrong or right moves till all moves", "isCovered": "true" },
 		{"title": "save/load game with settings", "isCovered": "true" },
 		{"title": "cover all types of validations", "isCovered": "true" },
-		{"title": "display menu of commands", "isCovered": "false" },
+		{"title": "display menu of commands", "isCovered": "true" },
+		{"title": "game should end if the array is fully filled", "isCovered": "true" },
+		{"title": "Arrays should start from 1 natively in order to avoid confusion", "isCovered": "true" },
+		{"title": "Automated Testing", "isCovered": "false" },
 		{"title": "TEMPLATE", "isCovered": "false/true" }
 	]
 }

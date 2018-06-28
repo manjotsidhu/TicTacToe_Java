@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import static com.org.manjotsidhu.tictactoe.Colors.*;
+import org.fusesource.jansi.AnsiConsole;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -54,9 +55,9 @@ public class TicTacToe {
     // Scanner
     Scanner scan = new Scanner(System.in);
     
-    // Help
+    // Help Object
     help helpMe = new help();
-   
+    
     /**
      * Welcome Page of TicTacToe
      */
@@ -72,6 +73,9 @@ public class TicTacToe {
             welcome();
         } else if(in == 'P') {
             System.out.println(RED_BG + WHITE + "Lets Play !!!" + RESET);
+        } else {
+            System.out.println("P to Play or H to help!");
+            welcome();
         }
     }
     
@@ -169,7 +173,7 @@ public class TicTacToe {
 
     /**
      * Reads Json input file, parses it to a String and sets
-     * variables to their superclass variables
+     * variables acc to their superclass variables
      *
      * @throws FileNotFoundException if <b>input.json</b> file is not found
      * @throws IOException if any I/O error occurs
@@ -178,7 +182,7 @@ public class TicTacToe {
      */
     public void jsonRead() throws FileNotFoundException, IOException, ParseException {
         JSONParser parser = new JSONParser();
-        System.out.println(GREEN + "Enter File Location: " + RESET);
+        System.out.println(GREEN + "Enter File Location(with file extension): " + RESET);
         Object obj = parser.parse(new FileReader(scan.next()));
 
         JSONObject myJson = (JSONObject) obj;
@@ -324,6 +328,8 @@ public class TicTacToe {
     // Init in-game parameters
     public void init() throws IOException, FileNotFoundException, ParseException {
         newHelp();
+        AnsiConsole.systemInstall();
+        welcome();
         askJsonImport();
         if (this.doJsonImport) {
             jsonRead();
@@ -514,7 +520,7 @@ public class TicTacToe {
                 result1++;
                 if (result1 == this.pattern) {
                     this.doNextMove = false;
-                    result();
+                    win();
                     break;
                 }
             } else {
@@ -526,7 +532,7 @@ public class TicTacToe {
                 result2++;
                 if (result2 == this.pattern) {
                     this.doNextMove = false;
-                    result();
+                    win();
                     break;
                 }
             } else {
@@ -538,7 +544,7 @@ public class TicTacToe {
                 result3++;
                 if (result3 == this.pattern) {
                     this.doNextMove = false;
-                    result();
+                    win();
                     break;
                 }
             } else {
@@ -552,7 +558,7 @@ public class TicTacToe {
                         result4++;
                         if (result4 == this.pattern) {
                             this.doNextMove = false;
-                            result();
+                            win();
                             break;
                         }
                     } else {
@@ -572,7 +578,7 @@ public class TicTacToe {
                         result5++;
                         if (result5 == this.pattern) {
                             this.doNextMove = false;
-                            result();
+                            win();
                             break;
                         }
                     } else {
@@ -592,7 +598,7 @@ public class TicTacToe {
                         result6++;
                         if (result6 == this.pattern) {
                             this.doNextMove = false;
-                            result();
+                            win();
                             break;
                         }
                     } else {
@@ -627,12 +633,40 @@ public class TicTacToe {
     }
 
     /**
+     * Checks if the board is full and its a draw
+     * 
+     * @return boolean if its draw or not
+     */
+    public boolean checkDraw() {
+        for(String[] elementArr: this.board) {
+            for(String element: elementArr) {
+                if(element == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Prints Draw message
+     */
+    public void draw() {
+        renderStructure();
+        System.out.println(RED_BG + WHITE + "Oops! Its a draw!" + RESET);
+        System.out.println(RED_BG + WHITE + "Better luck next time!" + RESET);
+        if(!this.doJsonImport) {
+            askJsonExport();
+        }
+    }
+    
+    /**
      * Prints the congratulations message on win
      */
-    public void result() {
+    public void win() {
         renderStructure();
-        System.out.printf("%s%sPlayer %s won the game.\n", RED_BG, WHITE, turnChar);
-        System.out.println(RED_BG + WHITE + "Thanks For Playing." + RESET);
+        System.out.println(RED_BG + WHITE + "Player " + this.turnChar + " won the Game!" + RESET);
+        System.out.println(RED_BG + WHITE + "Thanks For Playing!" + RESET);
         if(!this.doJsonImport) {
             askJsonExport();
         }
@@ -664,7 +698,6 @@ public class TicTacToe {
      * @throws org.json.simple.parser.ParseException
      */
     public void start() throws IOException, FileNotFoundException, ParseException {
-        welcome();
         init();
         validateStructure();
         int move = 0;
@@ -720,6 +753,10 @@ public class TicTacToe {
             setValue(x, y);
             logic(x, y);
             
+            if(checkDraw()) {
+                draw();
+                break;
+            }
             nextTurn();
             move++;
             if(this.doJsonImport) {
