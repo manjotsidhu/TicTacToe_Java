@@ -182,7 +182,7 @@ public class TicTacToe {
      */
     public void jsonRead() throws FileNotFoundException, IOException, ParseException {
         JSONParser parser = new JSONParser();
-        System.out.println(GREEN + "Enter File Location(with file extension): " + RESET);
+        System.out.println(GREEN + "Enter File Location (with file extension): " + RESET);
         Object obj = parser.parse(new FileReader(scan.next()));
 
         JSONObject myJson = (JSONObject) obj;
@@ -753,7 +753,8 @@ public class TicTacToe {
             setValue(x, y);
             logic(x, y);
             
-            if(checkDraw()) {
+            if(checkDraw() && this.doNextMove) {
+                this.doNextMove = false;
                 draw();
                 break;
             }
