@@ -7,79 +7,81 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+        <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-	<dependencies>
-    <!--  org.json.simple Java Library -->
-    <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>1.1</version>
-      <scope>compile</scope>
-    </dependency>
-	<!-- ord.fusesource.jansi Java Library for ANSI Colors Support -->
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi</artifactId>
-      <version>1.17.1</version>
-      <scope>compile</scope>
-    </dependency>
-	</dependencies>
+    <dependencies>
+        <!--  org.json.simple Java Library -->
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- org.fusesource.jansi Java Library for ANSI Colors Support -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- org.github.manjotsidhu.beautifyjson for formatting json outputs -->
+        <dependency>
+            <groupId>com.github.manjotsidhu</groupId>
+            <artifactId>beautifyjson</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
     <name>TicTacToe</name>
-	
-	<build>
-		<plugins>
-			<plugin>
-			  <groupId>org.codehaus.mojo</groupId>
-			  <artifactId>exec-maven-plugin</artifactId>
-			  <version>1.2.1</version>
-			  <executions>
-				<execution>
-				  <goals>
-					<goal>java</goal>
-				  </goals>
-				</execution>
-			  </executions>
-			  <configuration>
-				<mainClass>com.org.manjotsidhu.tictactoe.TicTacToe</mainClass>
-			  </configuration>
-			</plugin>
-			
-			<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-shade-plugin</artifactId>
-			<executions>
-				<execution>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-					<configuration>
-						<shadedArtifactAttached>true</shadedArtifactAttached>
-						<transformers>
-							<transformer implementation=
-							  "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-								<mainClass>com.org.manjotsidhu.tictactoe.TicTacToe</mainClass>
-						</transformer>
-					</transformers>
-				</configuration>
-				</execution>
-			</executions>
-		</plugin>
-			
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-javadoc-plugin</artifactId>
-			<executions>
-				<execution>
-					<id>attach-javadocs</id>
-					<goals>
-						<goal>jar</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.org.manjotsidhu.tictactoe.TicTacToe</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.org.manjotsidhu.tictactoe.TicTacToe</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

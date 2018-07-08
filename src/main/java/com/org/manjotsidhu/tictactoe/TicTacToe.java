@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import static com.org.manjotsidhu.tictactoe.Colors.*;
+import com.github.manjotsidhu.beautifyjson.*;
 import org.fusesource.jansi.AnsiConsole;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -685,8 +686,9 @@ public class TicTacToe {
             filename += ".json";
         }
         FileWriter file = new FileWriter(filename);
-
-        file.write(MainJSON.toJSONString());
+        beautifyjson beautify = new beautifyjson();
+        
+        file.write(beautify.beautify(MainJSON.toJSONString()));
         file.flush();
     }
 
