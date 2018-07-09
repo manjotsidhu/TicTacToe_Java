@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.manjotsidhu</groupId>
             <artifactId>beautifyjson</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     <name>TicTacToe</name>

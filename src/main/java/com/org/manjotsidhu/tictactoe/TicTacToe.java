@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import static com.org.manjotsidhu.tictactoe.Colors.*;
 import com.github.manjotsidhu.beautifyjson.*;
+import java.util.Arrays;
 import org.fusesource.jansi.AnsiConsole;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -252,13 +253,32 @@ public class TicTacToe {
      * @param i number of players from Scanner
      */
     public void validateUsers(int i) {
-        // TODO: fix temp value to dynamic
-        int temp = 6;
+        int temp = this.boardSize-1;
         if(i < 1 || i > temp) {
             System.out.println(RED + "Number of players should not be less than 1"
                 + " and more than " + temp + RESET);
             System.out.println(RED + "Please try again" + RESET);
             setUsers();
+        }
+    }
+    
+    /**
+     * Validate player's character by the following criteria:
+     * <ol><li>Character must be unique of each player, give a error</li>
+     * <li>If character is more than one character, give a warning</li>
+     * </ol>
+     * @param chr player's character to validate
+     * @return true or false if character passes the above criteria
+     */
+    public boolean validateChars(String chr) {
+        if(chr.length() > 1) {
+            System.out.println(YELLOW + "NOTE: Only First Character will be assigned as your board marker" + RESET);
+        } 
+        if(Arrays.toString(this.playerChar).contains(chr)) {
+            System.out.println(RED + "Character is already been used by some other player, Please try again." + RESET);
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -268,9 +288,16 @@ public class TicTacToe {
     public void setUserProp() {
         for (int i = 0; i < playerChar.length; i++) {
             int n = i + 1;
-            System.out.print(GREEN + "Player " + n + ", enter your character: " + RESET);
-            this.playerChar[i] = scan.next().substring(0, 1);
+            System.out.print(GREEN + "Player " + n + ", enter your name/character: " + RESET);
+            String tempChar = scan.next();
 
+            if(validateChars(tempChar)) {
+                this.playerChar[i] = tempChar.substring(0, 1);
+            } else {
+                i--;
+                continue;
+            }
+                        
             System.out.print(GREEN + "Player " + n + ", enter your color: " + RESET);
             this.playerColor[i] = scan.next();
         }
