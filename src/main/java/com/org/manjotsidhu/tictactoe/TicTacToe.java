@@ -9,8 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import com.github.manjotsidhu.beautifyjson.beautifyjson;
 import static com.org.manjotsidhu.tictactoe.Colors.*;
-import com.github.manjotsidhu.beautifyjson.*;
 import java.util.Arrays;
 import org.fusesource.jansi.AnsiConsole;
 import org.json.simple.JSONArray;
@@ -666,14 +666,7 @@ public class TicTacToe {
      * @return boolean if its draw or not
      */
     public boolean checkDraw() {
-        for(String[] elementArr: this.board) {
-            for(String element: elementArr) {
-                if(element == null) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return !Arrays.deepToString(this.board).contains("null");
     }
     
     /**
